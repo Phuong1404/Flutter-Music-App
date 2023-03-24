@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "472792643936",
+    "project_id": "staffchamre",
+    "storage_bucket": "staffchamre.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472792643936:android:9a83b95ea19babe6480605",
+        "android_client_info": {
+          "package_name": "com.example.music_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472792643936-8nodeqghglta7ivndcd70ai30j86cj8o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEECM21-7kbCBVCblXkptE0N7zaa2g7T0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472792643936-8nodeqghglta7ivndcd70ai30j86cj8o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "472792643936-e63liob8rkt9dhi2cmilrktspmc5isr9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.thuongnguyen.StaffCharme"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472792643936:android:c8423985e03af436480605",
+        "android_client_info": {
+          "package_name": "com.thuongnguyen.StaffCharme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472792643936-b1pu4unlsisjak3li7b6h2qpl2oc7sab.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thuongnguyen.StaffCharme",
+            "certificate_hash": "c15a1cbf7b5e437f1264d463cf7bef2b8d1470ba"
+          }
+        },
+        {
+          "client_id": "472792643936-8nodeqghglta7ivndcd70ai30j86cj8o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEECM21-7kbCBVCblXkptE0N7zaa2g7T0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472792643936-8nodeqghglta7ivndcd70ai30j86cj8o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "472792643936-e63liob8rkt9dhi2cmilrktspmc5isr9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.thuongnguyen.StaffCharme"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

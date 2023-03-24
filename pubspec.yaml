@@ -1,0 +1,61 @@
+name: music_app
+description: Music App Clone Spotify.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+    
+  cupertino_icons: ^1.0.2
+  uuid: ^3.0.7
+  hive: ^2.2.3
+  get_it: ^7.2.0
+  provider: ^6.0.5
+  logging: ^1.1.1
+  on_audio_query: ^2.6.2
+  path_provider: ^2.0.13
+  audio_service: ^0.18.9
+  cached_network_image: ^3.2.3
+  hive_flutter: ^1.1.0
+  youtube_explode_dart: ^1.12.3
+  material_design_icons_flutter: ^6.0.7096
+  flip_card: ^0.7.0
+  share_plus: ^6.3.1
+  sliding_up_panel: ^2.0.0+1
+  url_launcher: ^6.1.10
+  audiotagger: ^2.2.1
+  permission_handler: ^10.2.0
+  fluentui_system_icons: ^1.1.190
+  just_audio: ^0.9.31
+  file_picker: ^5.2.6
+  salomon_bottom_bar: ^3.3.1
+  flutter_launcher_icons: ^0.12.0
+  firebase_messaging: ^14.3.0
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+  flutter_lints: ^2.0.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo_app.png"
+
+flutter:
+
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/
