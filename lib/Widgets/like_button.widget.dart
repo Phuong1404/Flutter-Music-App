@@ -4,13 +4,13 @@ import 'package:logging/logging.dart';
 import 'package:music_app/Widgets/snackbar.widget.dart';
 
 class LikeButton extends StatefulWidget {
-  final MediaItem? mediaItem;
+  // final MediaItem? mediaItem;
   final double? size;
   final Map? data;
   final bool showSnack;
   const LikeButton({
     super.key,
-    required this.mediaItem,
+    // required this.mediaItem,
     this.size,
     this.data,
     this.showSnack = false,

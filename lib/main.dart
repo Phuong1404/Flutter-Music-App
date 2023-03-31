@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:music_app/Screens/auth/register.screen.dart';
 import 'package:music_app/Screens/auth/signin.screen.dart';
 import 'package:music_app/Screens/auth/login.screen.dart';
@@ -26,15 +27,30 @@ void main() async{
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  void get_token()async{
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    // print('--------------------------------');
-    // print(fcmToken);
-    // print('--------------------------------');
-  }
+  // void get_token()async{
+  //   final fcmToken = await FirebaseMessaging.instance.getToken();
+  //   // print('--------------------------------');
+  //   // print(fcmToken);
+  //   // print('--------------------------------');
+  // }
+  
   @override
   Widget build(BuildContext context) {
-    get_token();
+    // get_token();
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.black38,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     return MaterialApp(
       title: 'Spotify clone',
       debugShowCheckedModeBanner: false,

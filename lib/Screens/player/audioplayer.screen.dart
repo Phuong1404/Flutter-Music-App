@@ -12,7 +12,9 @@ import 'package:get_it/get_it.dart';
 // import 'package:hive/hive.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:music_app/Widgets/copy_clipboard.widget.dart';
+import 'package:music_app/Widgets/download_button.widget.dart';
 import 'package:music_app/Widgets/empty_screen.widget.dart';
+import 'package:music_app/Widgets/like_button.widget.dart';
 import 'package:music_app/Widgets/snackbar.widget.dart';
 import 'package:music_app/Widgets/textinput_dialog.widget.dart';
 import 'package:rxdart/rxdart.dart';
@@ -754,170 +756,150 @@ class QueueState {
       shuffleIndices ?? List.generate(queue.length, (i) => i);
 }
 
-// class ControlButtons extends StatelessWidget {
-//   final AudioPlayerHandler audioHandler;
-//   final bool shuffle;
-//   final bool miniplayer;
-//   final List buttons;
-//   final Color? dominantColor;
+class ControlButtons extends StatelessWidget {
+  // final AudioPlayerHandler audioHandler;
+  final bool shuffle;
+  final bool miniplayer;
+  final List buttons;
+  final Color? dominantColor;
 
-//   const ControlButtons(
-//     this.audioHandler, {
-//     this.shuffle = false,
-//     this.miniplayer = false,
-//     this.buttons = const ['Previous', 'Play/Pause', 'Next'],
-//     this.dominantColor,
-//   });
+  const ControlButtons(
+      // this.audioHandler,
+      {
+    this.shuffle = false,
+    this.miniplayer = false,
+    this.buttons = const ['Previous', 'Play/Pause', 'Next'],
+    this.dominantColor,
+  });
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final MediaItem mediaItem = audioHandler.mediaItem.value!;
-//     final bool online = mediaItem.extras!['url'].toString().startsWith('http');
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceAround,
-//       mainAxisSize: MainAxisSize.min,
-//       children: buttons.map((e) {
-//         switch (e) {
-//           case 'Like':
-//             return !online
-//                 ? const SizedBox()
-//                 : LikeButton(
-//                     mediaItem: mediaItem,
-//                     size: 22.0,
-//                   );
-//           case 'Previous':
-//             return StreamBuilder<QueueState>(
-//               stream: audioHandler.queueState,
-//               builder: (context, snapshot) {
-//                 final queueState = snapshot.data;
-//                 return IconButton(
-//                   icon: const Icon(Icons.skip_previous_rounded),
-//                   iconSize: miniplayer ? 24.0 : 45.0,
-//                   tooltip: AppLocalizations.of(context)!.skipPrevious,
-//                   color: dominantColor ?? Theme.of(context).iconTheme.color,
-//                   onPressed: queueState?.hasPrevious ?? true
-//                       ? audioHandler.skipToPrevious
-//                       : null,
-//                 );
-//               },
-//             );
-//           case 'Play/Pause':
-//             return SizedBox(
-//               height: miniplayer ? 40.0 : 65.0,
-//               width: miniplayer ? 40.0 : 65.0,
-//               child: StreamBuilder<PlaybackState>(
-//                 stream: audioHandler.playbackState,
-//                 builder: (context, snapshot) {
-//                   final playbackState = snapshot.data;
-//                   final processingState = playbackState?.processingState;
-//                   final playing = playbackState?.playing ?? true;
-//                   return Stack(
-//                     children: [
-//                       if (processingState == AudioProcessingState.loading ||
-//                           processingState == AudioProcessingState.buffering)
-//                         Center(
-//                           child: SizedBox(
-//                             height: miniplayer ? 40.0 : 65.0,
-//                             width: miniplayer ? 40.0 : 65.0,
-//                             child: CircularProgressIndicator(
-//                               valueColor: AlwaysStoppedAnimation<Color>(
-//                                 Theme.of(context).iconTheme.color!,
-//                               ),
-//                             ),
-//                           ),
-//                         ),
-//                       if (miniplayer)
-//                         Center(
-//                           child: playing
-//                               ? IconButton(
-//                                   tooltip: AppLocalizations.of(context)!.pause,
-//                                   onPressed: audioHandler.pause,
-//                                   icon: const Icon(
-//                                     Icons.pause_rounded,
-//                                   ),
-//                                   color: Theme.of(context).iconTheme.color,
-//                                 )
-//                               : IconButton(
-//                                   tooltip: AppLocalizations.of(context)!.play,
-//                                   onPressed: audioHandler.play,
-//                                   icon: const Icon(
-//                                     Icons.play_arrow_rounded,
-//                                   ),
-//                                   color: Theme.of(context).iconTheme.color,
-//                                 ),
-//                         )
-//                       else
-//                         Center(
-//                           child: SizedBox(
-//                             height: 59,
-//                             width: 59,
-//                             child: Center(
-//                               child: playing
-//                                   ? FloatingActionButton(
-//                                       elevation: 10,
-//                                       tooltip:
-//                                           AppLocalizations.of(context)!.pause,
-//                                       backgroundColor: Colors.white,
-//                                       onPressed: audioHandler.pause,
-//                                       child: const Icon(
-//                                         Icons.pause_rounded,
-//                                         size: 40.0,
-//                                         color: Colors.black,
-//                                       ),
-//                                     )
-//                                   : FloatingActionButton(
-//                                       elevation: 10,
-//                                       tooltip:
-//                                           AppLocalizations.of(context)!.play,
-//                                       backgroundColor: Colors.white,
-//                                       onPressed: audioHandler.play,
-//                                       child: const Icon(
-//                                         Icons.play_arrow_rounded,
-//                                         size: 40.0,
-//                                         color: Colors.black,
-//                                       ),
-//                                     ),
-//                             ),
-//                           ),
-//                         ),
-//                     ],
-//                   );
-//                 },
-//               ),
-//             );
-//           case 'Next':
-//             return StreamBuilder<QueueState>(
-//               stream: audioHandler.queueState,
-//               builder: (context, snapshot) {
-//                 final queueState = snapshot.data;
-//                 return IconButton(
-//                   icon: const Icon(Icons.skip_next_rounded),
-//                   iconSize: miniplayer ? 24.0 : 45.0,
-//                   tooltip: AppLocalizations.of(context)!.skipNext,
-//                   color: dominantColor ?? Theme.of(context).iconTheme.color,
-//                   onPressed: queueState?.hasNext ?? true
-//                       ? audioHandler.skipToNext
-//                       : null,
-//                 );
-//               },
-//             );
-//           case 'Download':
-//             return !online
-//                 ? const SizedBox()
-//                 : DownloadButton(
-//                     size: 20.0,
-//                     icon: 'download',
-//                     data: MediaItemConverter.mediaItemToMap(mediaItem),
-//                   );
-//           default:
-//             break;
-//         }
-//         return const SizedBox();
-//       }).toList(),
-
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    // final MediaItem mediaItem = audioHandler.mediaItem.value!;
+    final bool online = true;
+    // final bool online = mediaItem.extras!['url'].toString().startsWith('http');
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          LikeButton(
+            // mediaItem: mediaItem,
+            size: 22.0,
+          ),
+          // IconButton(
+          //   icon: const Icon(Icons.skip_previous_rounded),
+          //   // iconSize: miniplayer ? 24.0 : 45.0,
+          //   iconSize: 24.0 ,
+          //   tooltip: 'Skip Previous',
+          //   color: Colors.white,
+          //   onPressed: ()=>{},
+          //   // onPressed: queueState?.hasPrevious ?? true
+          //   //     ? audioHandler.skipToPrevious
+          //   //     : null,
+          // ),
+          SizedBox(
+            height: miniplayer ? 40.0 : 65.0,
+            width: miniplayer ? 40.0 : 65.0,
+            child: StreamBuilder<PlaybackState>(
+              // stream: audioHandler.playbackState,
+              builder: (context, snapshot) {
+                final playbackState = snapshot.data;
+                final processingState = playbackState?.processingState;
+                final playing = playbackState?.playing ?? true;
+                return Stack(
+                  children: [
+                    if (processingState == AudioProcessingState.loading ||
+                        processingState == AudioProcessingState.buffering)
+                      Center(
+                        child: SizedBox(
+                          height: miniplayer ? 40.0 : 65.0,
+                          width: miniplayer ? 40.0 : 65.0,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).iconTheme.color!,
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (miniplayer)
+                      Center(
+                        child: playing
+                            ? IconButton(
+                                tooltip: "Pause",
+                                // onPressed: audioHandler.pause,
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Icons.pause_rounded,
+                                ),
+                                color: Colors.white,
+                              )
+                            : IconButton(
+                                tooltip: "Play",
+                                // onPressed: audioHandler.play,
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Icons.play_arrow_rounded,
+                                ),
+                                color: Colors.white,
+                              ),
+                      )
+                    else
+                      Center(
+                        child: SizedBox(
+                          height: 59,
+                          width: 59,
+                          child: Center(
+                            child: playing
+                                ? FloatingActionButton(
+                                    elevation: 10,
+                                    tooltip: "Pause",
+                                    backgroundColor: Colors.white,
+                                    // onPressed: audioHandler.pause,
+                                    onPressed: () {},
+                                    child: const Icon(
+                                      Icons.pause_rounded,
+                                      size: 40.0,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : FloatingActionButton(
+                                    elevation: 10,
+                                    tooltip: "Play",
+                                    backgroundColor: Colors.white,
+                                    // onPressed: audioHandler.play,
+                                    onPressed: () {},
+                                    child: const Icon(
+                                      Icons.play_arrow_rounded,
+                                      size: 40.0,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.skip_next_rounded),
+            iconSize: miniplayer ? 24.0 : 45.0,
+            tooltip: 'Skip Next',
+            color: Colors.white,
+            onPressed: () => {},
+            // onPressed: queueState?.hasNext ?? true
+            //     ? audioHandler.skipToNext
+            //     : null,
+          ),
+          // DownloadButton(
+          //   size: 20.0,
+          //   icon: 'download',
+          //   data: {},
+          //   // data: MediaItemConverter.mediaItemToMap(mediaItem),
+          // )
+        ]);
+  }
+}
 
 abstract class AudioPlayerHandler implements AudioHandler {
   Stream<QueueState> get queueState;
@@ -928,14 +910,14 @@ abstract class AudioPlayerHandler implements AudioHandler {
 }
 
 class NowPlayingStream extends StatelessWidget {
-  final AudioPlayerHandler audioHandler;
+  // final AudioPlayerHandler audioHandler;
   final ScrollController? scrollController;
   final PanelController? panelController;
   final bool head;
   final double headHeight;
 
   const NowPlayingStream({
-    required this.audioHandler,
+    // required this.audioHandler,
     this.scrollController,
     this.panelController,
     this.head = false,
@@ -973,12 +955,14 @@ class NowPlayingStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QueueState>(
-      stream: audioHandler.queueState,
+      // stream: audioHandler.queueState,
       builder: (context, snapshot) {
         final queueState = snapshot.data ?? QueueState.empty;
         final queue = queueState.queue;
-        final int queueStateIndex = queueState.queueIndex ?? 0;
-        final num queuePosition = queue.length - queueStateIndex;
+        final int queueStateIndex = 1;
+        // final int queueStateIndex = queueState.queueIndex ?? 0;
+        // final num queuePosition = queue.length - queueStateIndex;
+        final num queuePosition = 10 - queueStateIndex;
         // WidgetsBinding.instance.addPostFrameCallback(
         //   (_) => _updateScrollController(
         //     scrollController,
@@ -987,213 +971,481 @@ class NowPlayingStream extends StatelessWidget {
         //     queue.length,
         //   ),
         // );
-
-        return ReorderableListView.builder(
+        return ReorderableListView(
+          buildDefaultDragHandles: false,
           header: SizedBox(
             height: head ? headHeight : 0,
           ),
-          onReorder: (int oldIndex, int newIndex) {
-            if (oldIndex < newIndex) {
-              newIndex--;
-            }
-            audioHandler.moveQueueItem(oldIndex, newIndex);
-          },
+          onReorder: (int oldIndex, int newIndex) {},
           scrollController: scrollController,
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.only(bottom: 10),
           shrinkWrap: true,
-          itemCount: queue.length,
-          itemBuilder: (context, index) {
-            return Dismissible(
-              key: ValueKey(queue[index].id),
-              direction: index == queueState.queueIndex
-                  ? DismissDirection.none
-                  : DismissDirection.horizontal,
+          children: <Widget>[
+            Dismissible(
+              key: const ValueKey(0),
+              direction: DismissDirection.horizontal,
               onDismissed: (dir) {
-                audioHandler.removeQueueItemAt(index);
+                // audioHandler.removeQueueItemAt(index);
               },
               child: ListTileTheme(
-                selectedColor: Theme.of(context).colorScheme.secondary,
+                selectedColor: Colors.transparent,
                 child: ListTile(
                   contentPadding:
                       const EdgeInsets.only(left: 16.0, right: 10.0),
-                  selected: index == queueState.queueIndex,
+                  selected: false,
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: (index == queueState.queueIndex)
-                        ? [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.bar_chart_rounded,
-                              ),
-                              tooltip: 'Playing',
-                              onPressed: () {},
-                            )
-                          ]
-                        : [
-                            if (queue[index]
-                                .extras!['url']
-                                .toString()
-                                .startsWith('http')) ...[
-                              // LikeButton(
-                              //   mediaItem: queue[index],
-                              // ),
-                              // DownloadButton(
-                              //   icon: 'download',
-                              //   size: 25.0,
-                              //   data: {
-                              //     'id': queue[index].id,
-                              //     'artist': queue[index].artist.toString(),
-                              //     'album': queue[index].album.toString(),
-                              //     'image': queue[index].artUri.toString(),
-                              //     'duration': queue[index]
-                              //         .duration!
-                              //         .inSeconds
-                              //         .toString(),
-                              //     'title': queue[index].title,
-                              //     'url': queue[index].extras?['url'].toString(),
-                              //     'year':
-                              //         queue[index].extras?['year'].toString(),
-                              //     'language': queue[index]
-                              //         .extras?['language']
-                              //         .toString(),
-                              //     'genre': queue[index].genre?.toString(),
-                              //     '320kbps': queue[index].extras?['320kbps'],
-                              //     'has_lyrics':
-                              //         queue[index].extras?['has_lyrics'],
-                              //     'release_date':
-                              //         queue[index].extras?['release_date'],
-                              //     'album_id': queue[index].extras?['album_id'],
-                              //     'subtitle': queue[index].extras?['subtitle'],
-                              //     'perma_url':
-                              //         queue[index].extras?['perma_url'],
-                              //   },
-                              // )
-                            ],
-                            ReorderableDragStartListener(
-                              key: Key(queue[index].id),
-                              index: index,
-                              enabled: index != queueState.queueIndex,
-                              child: const Icon(Icons.drag_handle_rounded),
-                            ),
-                          ],
-                  ),
+                    // children: (index == queueState.queueIndex)
+                    //     ? [
+                    //         IconButton(
+                    //           icon: const Icon(
+                    //             Icons.bar_chart_rounded,
+                    //           ),
+                    //           tooltip: 'Playing',
+                    //           onPressed: () {},
+                    //         )
+                    //       ]
+                    children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.bar_chart_rounded,
+                          ),
+                          color: Color.fromARGB(255, 4, 192, 60),
+                          tooltip: 'Playing',
+                          onPressed: () {},
+                        )
+                      ]
+                    ),
                   leading: Row(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      if (queue[index].extras?['addedByAutoplay'] as bool? ??
-                          false)
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                RotatedBox(
-                                  quarterTurns: 3,
-                                  child: Text(
-                                    'Added By',
-                                    textAlign: TextAlign.start,
-                                    style: const TextStyle(
-                                      fontSize: 5.0,
-                                    ),
-                                  ),
-                                ),
-                                RotatedBox(
-                                  quarterTurns: 3,
-                                  child: Text(
-                                    'Autoplay',
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      fontSize: 8.0,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 5.0,
-                            ),
-                          ],
-                        ),
                       Card(
                         elevation: 5,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(7.0),
                         ),
                         clipBehavior: Clip.antiAlias,
-                        child: (queue[index].artUri == null)
-                            ? const SizedBox.square(
-                                dimension: 50,
-                                child: Image(
-                                  image: AssetImage('assets/cover.jpg'),
-                                ),
-                              )
-                            : SizedBox.square(
-                                dimension: 50,
-                                child: queue[index]
-                                        .artUri
-                                        .toString()
-                                        .startsWith('file:')
-                                    ? Image(
-                                        fit: BoxFit.cover,
-                                        image: FileImage(
-                                          File(
-                                            queue[index].artUri!.toFilePath(),
-                                          ),
-                                        ),
-                                      )
-                                    : CachedNetworkImage(
-                                        fit: BoxFit.cover,
-                                        errorWidget:
-                                            (BuildContext context, _, __) =>
-                                                const Image(
-                                          fit: BoxFit.cover,
-                                          image: AssetImage(
-                                            'assets/cover.jpg',
-                                          ),
-                                        ),
-                                        placeholder:
-                                            (BuildContext context, _) =>
-                                                const Image(
-                                          fit: BoxFit.cover,
-                                          image: AssetImage(
-                                            'assets/cover.jpg',
-                                          ),
-                                        ),
-                                        imageUrl:
-                                            queue[index].artUri.toString(),
-                                      ),
+                        child:
+                            SizedBox.square(
+                          dimension: 50,
+                          child: CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            errorWidget: (BuildContext context, _, __) =>
+                                const Image(
+                              fit: BoxFit.cover,
+                              image: AssetImage(
+                                'assets/cover.jpg',
                               ),
+                            ),
+                            placeholder: (BuildContext context, _) =>
+                                const Image(
+                              fit: BoxFit.cover,
+                              image: AssetImage(
+                                'assets/cover.jpg',
+                              ),
+                            ),
+                            imageUrl:
+                                'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
+                          ),
+                        ),
                       ),
                     ],
                   ),
                   title: Text(
-                    queue[index].title,
+                    'Xin em',
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontWeight: index == queueState.queueIndex
-                          ? FontWeight.w600
-                          : FontWeight.normal,
-                    ),
+                        fontWeight: FontWeight.w600, color: Colors.white
+                        ),
                   ),
                   subtitle: Text(
-                    queue[index].artist!,
+                    'Bùi Anh Tuấn',
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.white70),
                   ),
                   onTap: () {
-                    audioHandler.skipToQueueItem(index);
                   },
                 ),
               ),
-            );
-          },
+            ),
+            Dismissible(
+              key: const ValueKey(1),
+              direction: DismissDirection.horizontal,
+              onDismissed: (dir) {
+                // audioHandler.removeQueueItemAt(index);
+              },
+              child: ListTileTheme(
+                selectedColor: Colors.transparent,
+                child: ListTile(
+                  contentPadding:
+                      const EdgeInsets.only(left: 16.0, right: 10.0),
+                  selected: false,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      LikeButton(
+                          // mediaItem: queue[index],
+                          ),
+                      DownloadButton(icon: 'download', size: 25.0, data: {}),
+                      ReorderableDragStartListener(
+                        key: Key('1'),
+                        index: 1,
+                        enabled: true,
+                        child: const Icon(
+                          Icons.drag_handle_rounded,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  leading: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7.0),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child:
+                            SizedBox.square(
+                          dimension: 50,
+                          child: CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            errorWidget: (BuildContext context, _, __) =>
+                                const Image(
+                              fit: BoxFit.cover,
+                              image: AssetImage(
+                                'assets/cover.jpg',
+                              ),
+                            ),
+                            placeholder: (BuildContext context, _) =>
+                                const Image(
+                              fit: BoxFit.cover,
+                              image: AssetImage(
+                                'assets/cover.jpg',
+                              ),
+                            ),
+                            imageUrl:
+                                'https://c-cl.cdn.smule.com/rs-s94/arr/18/66/011b2306-b067-44b7-ba7a-d7c3717fe92a.jpg',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  title: Text(
+                    'Thương em là điều anh không thể ngờ',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600, color: Colors.white
+                        ),
+                  ),
+                  subtitle: Text(
+                    'Noo Phước Thịnh',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                  onTap: () {
+                  },
+                ),
+              ),
+            ),
+          Dismissible(
+              key: const ValueKey(2),
+              direction: DismissDirection.horizontal,
+              onDismissed: (dir) {
+                // audioHandler.removeQueueItemAt(index);
+              },
+              child: ListTileTheme(
+                selectedColor: Colors.transparent,
+                child: ListTile(
+                  contentPadding:
+                      const EdgeInsets.only(left: 16.0, right: 10.0),
+                  selected: false,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      LikeButton(
+                          // mediaItem: queue[index],
+                          ),
+                      DownloadButton(icon: 'download', size: 25.0, data: {}),
+                      ReorderableDragStartListener(
+                        key: Key('2'),
+                        index: 1,
+                        enabled: true,
+                        child: const Icon(
+                          Icons.drag_handle_rounded,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  leading: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7.0),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child:
+                            SizedBox.square(
+                          dimension: 50,
+                          child: CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            errorWidget: (BuildContext context, _, __) =>
+                                const Image(
+                              fit: BoxFit.cover,
+                              image: AssetImage(
+                                'assets/cover.jpg',
+                              ),
+                            ),
+                            placeholder: (BuildContext context, _) =>
+                                const Image(
+                              fit: BoxFit.cover,
+                              image: AssetImage(
+                                'assets/cover.jpg',
+                              ),
+                            ),
+                            imageUrl:
+                                'https://avatar-ex-swe.nixcdn.com/song/2020/06/15/b/0/f/a/1592231470406_640.jpg',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  title: Text(
+                    'Cưới nhau đi(Yes I Do)',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600, color: Colors.white
+                        ),
+                  ),
+                  subtitle: Text(
+                    'Bùi Anh Tuấn, Hiền Hồ',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                  },
+                ),
+              ),
+            )
+          
+          ],
         );
+
+        // return ReorderableListView.builder(
+        //   header: SizedBox(
+        //     height: head ? headHeight : 0,
+        //   ),
+        //   onReorder: (int oldIndex, int newIndex) {
+        //     if (oldIndex < newIndex) {
+        //       newIndex--;
+        //     }
+        //     // audioHandler.moveQueueItem(oldIndex, newIndex);
+        //   },
+        //   scrollController: scrollController,
+        //   physics: const BouncingScrollPhysics(),
+        //   padding: const EdgeInsets.only(bottom: 10),
+        //   shrinkWrap: true,
+        //   itemCount: queue.length,
+        //   itemBuilder: (context, index) {
+        //     return Dismissible(
+        //       key: ValueKey(queue[index].id),
+        //       direction: index == queueState.queueIndex
+        //           ? DismissDirection.none
+        //           : DismissDirection.horizontal,
+        //       onDismissed: (dir) {
+        //         // audioHandler.removeQueueItemAt(index);
+        //       },
+        //       child: ListTileTheme(
+        //         selectedColor: Theme.of(context).colorScheme.secondary,
+        //         child: ListTile(
+        //           contentPadding:
+        //               const EdgeInsets.only(left: 16.0, right: 10.0),
+        //           selected: index == queueState.queueIndex,
+        //           trailing: Row(
+        //             mainAxisSize: MainAxisSize.min,
+        //             children: (index == queueState.queueIndex)
+        //                 ? [
+        //                     IconButton(
+        //                       icon: const Icon(
+        //                         Icons.bar_chart_rounded,
+        //                       ),
+        //                       tooltip: 'Playing',
+        //                       onPressed: () {},
+        //                     )
+        //                   ]
+        //                 : [
+        //                     if (queue[index]
+        //                         .extras!['url']
+        //                         .toString()
+        //                         .startsWith('http')) ...[
+        //                       // LikeButton(
+        //                       //   mediaItem: queue[index],
+        //                       // ),
+        //                       // DownloadButton(
+        //                       //   icon: 'download',
+        //                       //   size: 25.0,
+        //                       //   data: {
+        //                       //     'id': queue[index].id,
+        //                       //     'artist': queue[index].artist.toString(),
+        //                       //     'album': queue[index].album.toString(),
+        //                       //     'image': queue[index].artUri.toString(),
+        //                       //     'duration': queue[index]
+        //                       //         .duration!
+        //                       //         .inSeconds
+        //                       //         .toString(),
+        //                       //     'title': queue[index].title,
+        //                       //     'url': queue[index].extras?['url'].toString(),
+        //                       //     'year':
+        //                       //         queue[index].extras?['year'].toString(),
+        //                       //     'language': queue[index]
+        //                       //         .extras?['language']
+        //                       //         .toString(),
+        //                       //     'genre': queue[index].genre?.toString(),
+        //                       //     '320kbps': queue[index].extras?['320kbps'],
+        //                       //     'has_lyrics':
+        //                       //         queue[index].extras?['has_lyrics'],
+        //                       //     'release_date':
+        //                       //         queue[index].extras?['release_date'],
+        //                       //     'album_id': queue[index].extras?['album_id'],
+        //                       //     'subtitle': queue[index].extras?['subtitle'],
+        //                       //     'perma_url':
+        //                       //         queue[index].extras?['perma_url'],
+        //                       //   },
+        //                       // )
+        //                     ],
+        //                     ReorderableDragStartListener(
+        //                       key: Key(queue[index].id),
+        //                       index: index,
+        //                       enabled: index != queueState.queueIndex,
+        //                       child: const Icon(Icons.drag_handle_rounded),
+        //                     ),
+        //                   ],
+        //           ),
+        //           leading: Row(
+        //             mainAxisSize: MainAxisSize.min,
+        //             crossAxisAlignment: CrossAxisAlignment.end,
+        //             children: [
+        //               if (queue[index].extras?['addedByAutoplay'] as bool? ??
+        //                   false)
+        //                 Column(
+        //                   mainAxisAlignment: MainAxisAlignment.end,
+        //                   children: [
+        //                     Row(
+        //                       crossAxisAlignment: CrossAxisAlignment.end,
+        //                       children: [
+        //                         RotatedBox(
+        //                           quarterTurns: 3,
+        //                           child: Text(
+        //                             'Added By',
+        //                             textAlign: TextAlign.start,
+        //                             style: const TextStyle(
+        //                               fontSize: 5.0,
+        //                             ),
+        //                           ),
+        //                         ),
+        //                         RotatedBox(
+        //                           quarterTurns: 3,
+        //                           child: Text(
+        //                             'Autoplay',
+        //                             textAlign: TextAlign.start,
+        //                             style: TextStyle(
+        //                               fontSize: 8.0,
+        //                               color: Theme.of(context)
+        //                                   .colorScheme
+        //                                   .secondary,
+        //                               fontWeight: FontWeight.w600,
+        //                             ),
+        //                           ),
+        //                         ),
+        //                       ],
+        //                     ),
+        //                     const SizedBox(
+        //                       height: 5.0,
+        //                     ),
+        //                   ],
+        //                 ),
+        //               Card(
+        //                 elevation: 5,
+        //                 shape: RoundedRectangleBorder(
+        //                   borderRadius: BorderRadius.circular(7.0),
+        //                 ),
+        //                 clipBehavior: Clip.antiAlias,
+        //                 child: (queue[index].artUri == null)
+        //                     ? const SizedBox.square(
+        //                         dimension: 50,
+        //                         child: Image(
+        //                           image: AssetImage('assets/cover.jpg'),
+        //                         ),
+        //                       )
+        //                     : SizedBox.square(
+        //                         dimension: 50,
+        //                         child: queue[index]
+        //                                 .artUri
+        //                                 .toString()
+        //                                 .startsWith('file:')
+        //                             ? Image(
+        //                                 fit: BoxFit.cover,
+        //                                 image: FileImage(
+        //                                   File(
+        //                                     queue[index].artUri!.toFilePath(),
+        //                                   ),
+        //                                 ),
+        //                               )
+        //                             : CachedNetworkImage(
+        //                                 fit: BoxFit.cover,
+        //                                 errorWidget:
+        //                                     (BuildContext context, _, __) =>
+        //                                         const Image(
+        //                                   fit: BoxFit.cover,
+        //                                   image: AssetImage(
+        //                                     'assets/cover.jpg',
+        //                                   ),
+        //                                 ),
+        //                                 placeholder:
+        //                                     (BuildContext context, _) =>
+        //                                         const Image(
+        //                                   fit: BoxFit.cover,
+        //                                   image: AssetImage(
+        //                                     'assets/cover.jpg',
+        //                                   ),
+        //                                 ),
+        //                                 imageUrl:
+        //                                     queue[index].artUri.toString(),
+        //                               ),
+        //                       ),
+        //               ),
+        //             ],
+        //           ),
+        //           title: Text(
+        //             queue[index].title,
+        //             overflow: TextOverflow.ellipsis,
+        //             style: TextStyle(
+        //               fontWeight: index == queueState.queueIndex
+        //                   ? FontWeight.w600
+        //                   : FontWeight.normal,
+        //             ),
+        //           ),
+        //           subtitle: Text(
+        //             queue[index].artist!,
+        //             overflow: TextOverflow.ellipsis,
+        //           ),
+        //           onTap: () {
+        //             // audioHandler.skipToQueueItem(index);
+        //           },
+        //         ),
+        //       ),
+        //     );
+        //   },
+        // );
       },
     );
   }

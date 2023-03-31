@@ -19,11 +19,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return GradientContainer(
         child: Scaffold(
             appBar: AppBar(
-              systemOverlayStyle: SystemUiOverlayStyle(
-                // Status bar color
-                statusBarColor: Colors.black,
-                systemNavigationBarColor: Colors.black,
-              ),
               elevation: 0,
               backgroundColor: Colors.transparent,
               toolbarHeight: 0,

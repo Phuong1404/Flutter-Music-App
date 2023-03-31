@@ -3,7 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:music_app/Screens/artists/artist.screen.dart';
 import 'package:music_app/Screens/home/body_home.screen.dart';
+import 'package:music_app/Screens/library/library.screen.dart';
+import 'package:music_app/Screens/topchart/top_chart.screen.dart';
+import 'package:music_app/Widgets/custom_physics.widget.dart';
 import 'package:music_app/Widgets/gradient_container.widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:music_app/Widgets/miniplayer.widget.dart';
@@ -24,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   //   'sectionsToShow',
   //   defaultValue: ['Home', 'Top Charts', 'YouTube', 'Library'],
   // ) as List;
+
+  List sectionsToShow=['Home', 'Top Charts', 'Artists', 'Library'] as List;
   Future<bool> handleWillPop(BuildContext context) async {
     // final now = DateTime.now();
     // final backButtonHasNotBeenPressedOrSnackBarHasBeenClosed =
@@ -41,6 +47,14 @@ class _HomeScreenState extends State<HomeScreen> {
     //   return false;
     // }
     return true;
+  }
+
+
+  void _onItemTapped(int index) {
+    _selectedIndex.value = index;
+    _pageController.jumpToPage(
+      index,
+    );
   }
 
   @override
@@ -240,11 +254,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: PageView(
-                        // physics: const CustomPhysics(),
+                        physics: const CustomPhysics(),
                         onPageChanged: (indx) {
                           _selectedIndex.value = indx;
                         },
-                        // controller: _pageController,
+                        controller: _pageController,
                         children: [
                           Stack(
                             children: [
@@ -531,8 +545,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                             ],
                           ),
+                          TopChartScreen(
+                              pageController: _pageController,
+                            ),
+                          ArtistScreen(
+                              pageController: _pageController,
+                            ),
+                          LibraryScreen()
                           // if (sectionsToShow.contains('Top Charts'))
-                          //   TopCharts(
+                            
+                          //   TopChartScreen(
                           //     pageController: _pageController,
                           //   ),
                           // const YouTube(),
@@ -562,12 +584,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: SalomonBottomBar(
                       currentIndex: indexValue,
                       onTap: (index) {
-                        // _onItemTapped(index);
+                        _onItemTapped(index);
                       },
                       items: [
                         SalomonBottomBarItem(
                           icon: const Icon(Icons.home_rounded),
                           title: Text('Home'),
+                          unselectedColor: Colors.white,
                           selectedColor: Color.fromARGB(255, 4, 192, 60),
                         ),
                         // if (sectionsToShow.contains('Top Charts'))
@@ -580,8 +603,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           selectedColor: Color.fromARGB(255, 4, 192, 60),
                         ),
                         SalomonBottomBarItem(
-                          icon: const Icon(MdiIcons.youtube),
-                          title: Text('YouTube'),
+                          icon: const Icon(MdiIcons.album),
+                          title: Text('Artists'),
                           unselectedColor: Colors.white,
                           selectedColor: Color.fromARGB(255, 4, 192, 60),
                         ),

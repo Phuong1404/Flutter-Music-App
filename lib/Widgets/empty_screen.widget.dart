@@ -26,7 +26,7 @@ Widget emptyScreen(
                 fontSize: size1,
                 color: useWhite
                     ? Colors.white
-                    : Theme.of(context).colorScheme.secondary,
+                    : Color.fromARGB(255, 4, 192, 60),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -39,7 +39,7 @@ Widget emptyScreen(
                   fontSize: size2,
                   color: useWhite
                       ? Colors.white
-                      : Theme.of(context).colorScheme.secondary,
+                      : Color.fromARGB(255, 4, 192, 60),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -48,7 +48,7 @@ Widget emptyScreen(
                 style: TextStyle(
                   fontSize: size3,
                   fontWeight: FontWeight.w600,
-                  color: useWhite ? Colors.white : null,
+                  color: useWhite ? Colors.white : Colors.white,
                 ),
               ),
             ],

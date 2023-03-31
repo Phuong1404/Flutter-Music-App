@@ -15,11 +15,6 @@ class _StartScreenState extends State<StartScreen> {
     return GradientContainer(
         child: Scaffold(
             appBar: AppBar(
-              systemOverlayStyle: SystemUiOverlayStyle(
-                // Status bar color
-                statusBarColor: Colors.black,
-                systemNavigationBarColor: Colors.black,
-              ),
               elevation: 0,
               backgroundColor: Colors.transparent,
               toolbarHeight: 0,
