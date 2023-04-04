@@ -61,13 +61,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
           title: 'Last Session',
           icon: Icons.history_rounded,
           onTap: () {
-            // Navigator.pushNamed(context, '/recent');
+            Navigator.pushNamed(context, '/recent');
           },
         ),
         LibraryTile(
           title: 'Favorites',
           icon: Icons.favorite_rounded,
           onTap: () {
+            Navigator.pushNamed(context, '/favorite');
             // Navigator.push(
             //   context,
             //   MaterialPageRoute(
@@ -107,7 +108,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
           title: 'Playlists',
           icon: Icons.playlist_play_rounded,
           onTap: () {
-            // Navigator.pushNamed(context, '/playlists');
+            Navigator.pushNamed(context, '/playlist');
           },
         ),
       ],

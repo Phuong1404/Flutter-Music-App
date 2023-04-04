@@ -213,7 +213,7 @@ class BouncyPlaylistHeaderScrollView extends StatelessWidget {
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 18.0,
-                                                    color:Colors.white,
+                                                    color: Colors.white,
                                                     // color: Theme.of(context)
                                                     //             .colorScheme
                                                     //             .secondary ==
@@ -283,6 +283,12 @@ class BouncyPlaylistHeaderScrollView extends StatelessWidget {
               stretch: true,
               pinned: true,
               centerTitle: true,
+              leading: IconButton(
+                  splashColor: Colors.transparent,
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => {Navigator.pop(context, true)}
+                  // onPressed: () => Navigator.of(context).pop(),
+                  ),
               floating: true,
               backgroundColor: Colors.transparent,
               // backgroundColor: isTransparent.value ? Colors.transparent : null,

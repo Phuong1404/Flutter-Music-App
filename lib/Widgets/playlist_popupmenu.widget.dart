@@ -19,8 +19,10 @@ class _PlaylistPopupMenuState extends State<PlaylistPopupMenu> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
+      color: Color.fromARGB(255, 22, 22, 23),
       icon: const Icon(
         Icons.more_vert_rounded,
+        color: Colors.white,
       ),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(15.0)),
@@ -32,10 +34,13 @@ class _PlaylistPopupMenuState extends State<PlaylistPopupMenu> {
             children: [
               Icon(
                 Icons.queue_music_rounded,
-                color: Theme.of(context).iconTheme.color,
+                color: Colors.white,
               ),
               const SizedBox(width: 10.0),
-              Text('Add to Queue'),
+              Text(
+                'Add to Queue',
+                style: TextStyle(color: Colors.white),
+              ),
             ],
           ),
         ),
@@ -45,51 +50,18 @@ class _PlaylistPopupMenuState extends State<PlaylistPopupMenu> {
             children: [
               Icon(
                 Icons.favorite_border_rounded,
-                color: Theme.of(context).iconTheme.color,
+                color: Colors.white,
               ),
               const SizedBox(width: 10.0),
-              Text('Save Playlist'),
+              Text(
+                'Save Playlist',
+                style: TextStyle(color: Colors.white),
+              ),
             ],
           ),
         ),
       ],
-      onSelected: (int? value) {
-        // if (value == 1) {
-        //   addPlaylist(widget.title, widget.data).then(
-        //     (value) => ShowSnackBar().showSnackBar(
-        //       context,
-        //       '"${widget.title}" ${AppLocalizations.of(context)!.addedToPlaylists}',
-        //     ),
-        //   );
-        // }
-        // if (value == 0) {
-        //   final AudioPlayerHandler audioHandler = GetIt.I<AudioPlayerHandler>();
-        //   final MediaItem? currentMediaItem = audioHandler.mediaItem.value;
-        //   if (currentMediaItem != null &&
-        //       currentMediaItem.extras!['url'].toString().startsWith('http')) {
-        //     // TODO: make sure to check if song is already in queue
-        //     final queue = audioHandler.queue.value;
-        //     widget.data.map((e) {
-        //       final element = MediaItemConverter.mapToMediaItem(e as Map);
-        //       if (!queue.contains(element)) {
-        //         audioHandler.addQueueItem(element);
-        //       }
-        //     });
-
-        //     ShowSnackBar().showSnackBar(
-        //       context,
-        //       '"${widget.title}" ${AppLocalizations.of(context)!.addedToQueue}',
-        //     );
-        //   } else {
-        //     ShowSnackBar().showSnackBar(
-        //       context,
-        //       currentMediaItem == null
-        //           ? AppLocalizations.of(context)!.nothingPlaying
-        //           : AppLocalizations.of(context)!.cantAddToQueue,
-        //     );
-        //   }
-        // }
-      },
+      onSelected: (int? value) {},
     );
   }
 }

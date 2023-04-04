@@ -4,7 +4,10 @@ import 'package:music_app/Screens/auth/register.screen.dart';
 import 'package:music_app/Screens/auth/signin.screen.dart';
 import 'package:music_app/Screens/common/song_list.screen.dart';
 import 'package:music_app/Screens/home/home.screen.dart';
-import 'package:music_app/Screens/library/nowplaying.dart';
+import 'package:music_app/Screens/library/liked.screen.dart';
+import 'package:music_app/Screens/library/nowplaying.screen.dart';
+import 'package:music_app/Screens/library/playlists.dart';
+import 'package:music_app/Screens/library/recent.screen.dart';
 import 'package:music_app/Screens/start/start.screen.dart';
 
 
@@ -16,5 +19,8 @@ final Map<String, WidgetBuilder> routes = {
   StartScreen.routeName: (context) => StartScreen(),
   HomeScreen.routeName:(context) => HomeScreen(),
   SongsListScreen.routeName:(context) => SongsListScreen(),
-  NowPlaying.routeName:(context)=>NowPlaying()
+  NowPlaying.routeName:(context)=>NowPlaying(),
+  RecentlyPlayed.routeName:(context)=>RecentlyPlayed(),
+  LikedSongs.routeName:(context)=>LikedSongs(playlistName: '',),
+  PlaylistScreen.routeName:(context)=>PlaylistScreen()
 };

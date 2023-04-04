@@ -35,20 +35,18 @@ class _NowPlayingState extends State<NowPlaying> {
                 final playbackState = snapshot.data;
                 final processingState = playbackState?.processingState;
                 return Scaffold(
+                  
                   backgroundColor: Colors.transparent,
                   // appBar: processingState != AudioProcessingState.idle
                   //     ? null
                   //     : AppBar(
                   //         title: Text('Now Playing'),
                   //         centerTitle: true,
-                  //         backgroundColor:
-                  //             Theme.of(context).brightness == Brightness.dark
-                  //                 ? Colors.transparent
-                  //                 : Theme.of(context).colorScheme.secondary,
+                  //         backgroundColor:Colors.transparent,
                   //         elevation: 0,
                   //       ),
-                  appBar: null,
-                  // AppBar(
+                  // appBar: null,
+                  // appBar:AppBar(
                   //         title: Text('Now Playing'),
                   //         centerTitle: true,
                   //         backgroundColor: Colors.transparent,
@@ -113,6 +111,7 @@ class _NowPlayingState extends State<NowPlaying> {
                         //     ? const SizedBox()
                         //     : 
                         return BouncyImageSliverScrollView(
+                          
                                 scrollController: _scrollController,
                                 title: 'Now Playing',
                                 localImage: false,

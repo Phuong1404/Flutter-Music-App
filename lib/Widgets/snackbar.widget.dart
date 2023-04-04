@@ -25,7 +25,7 @@ class ShowSnackBar {
               : action ??
                   SnackBarAction(
                     textColor: Color.fromARGB(255, 4, 192, 60),
-                    label: 'Ok',
+                    label: 'OK',
                     onPressed: () {},
                   ),
         ),

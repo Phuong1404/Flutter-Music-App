@@ -18,12 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final Size size = MediaQuery.of(context).size;
     return GradientContainer(
         child: Scaffold(
-            appBar: AppBar(
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              toolbarHeight: 0,
-            ),
-            extendBodyBehindAppBar: true,
+            resizeToAvoidBottomInset: false,
+            backgroundColor: Colors.transparent,
             body: SafeArea(
                 child: Stack(children: [
               const GradientContainer(
@@ -116,20 +112,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Colors.white70,
                                 ),
                               ),
-                              // onSubmitted: (String value) async {
-                              //   if (value.trim() == '') {
-                              //     await _addUserData(
-                              //       AppLocalizations.of(context)!
-                              //           .guest,
-                              //     );
-                              //   } else {
-                              //     await _addUserData(value.trim());
-                              //   }
-                              //   Navigator.popAndPushNamed(
-                              //     context,
-                              //     '/pref',
-                              //   );
-                              // },
                             ),
                           ),
                           SizedBox(
@@ -221,17 +203,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 20,
                       ),
                       GestureDetector(
-                        // onTap: () async {
-                        //   if (controller.text.trim() == '') {
-                        //     await _addUserData('Guest');
-                        //   } else {
-                        //     await _addUserData(
-                        //       controller.text.trim(),
-                        //     );
-                        //   }
-                        //   Navigator.popAndPushNamed(
-                        //       context, '/pref');
-                        // },
                         onTap: () {
                               Navigator.popAndPushNamed(context, '/home');
                             },

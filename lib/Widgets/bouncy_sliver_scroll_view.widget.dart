@@ -57,8 +57,6 @@ class BouncyImageSliverScrollView extends StatelessWidget {
                   image: AssetImage(placeholderImage),
                 ),
               );
-    // final bool rotated =
-    // MediaQuery.of(context).size.height < MediaQuery.of(context).size.width;
     final double expandedHeight =
         MediaQuery.of(context).size.height * (fromYt ? 0.2 : 0.4);
 
@@ -108,7 +106,7 @@ class BouncyImageSliverScrollView extends StatelessWidget {
               pinned: true,
               centerTitle: true,
               // floating: true,
-              backgroundColor: _opacity.value < 0.6 ? Colors.transparent : null,
+              backgroundColor: _opacity.value < 0.6 ? Colors.transparent : Colors.transparent,
               expandedHeight: expandedHeight,
               actions: actions,
               flexibleSpace: FlexibleSpaceBar(

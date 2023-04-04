@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:music_app/Screens/artists/artist.screen.dart';
 import 'package:music_app/Screens/home/body_home.screen.dart';
 import 'package:music_app/Screens/library/library.screen.dart';
+import 'package:music_app/Screens/search/search.screen.dart';
 import 'package:music_app/Screens/topchart/top_chart.screen.dart';
 import 'package:music_app/Widgets/custom_physics.widget.dart';
 import 'package:music_app/Widgets/gradient_container.widget.dart';
@@ -351,43 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           CrossAxisAlignment
                                                               .end,
                                                       children: [
-                                                        // ValueListenableBuilder(
-                                                        //   valueListenable:
-                                                        //       Hive.box(
-                                                        //     'settings',
-                                                        //   ).listenable(),
-                                                        //   builder: (
-                                                        //     BuildContext
-                                                        //         context,
-                                                        //     Box box,
-                                                        //     Widget? child,
-                                                        //   ) {
-                                                        //     return Text(
-                                                        //       (box.get('name') ==
-                                                        //                   null ||
-                                                        //               box.get('name') ==
-                                                        //                   '')
-                                                        //           ? 'Guest'
-                                                        //           : box
-                                                        //               .get(
-                                                        //                 'name',
-                                                        //               )
-                                                        //               .split(
-                                                        //                 ' ',
-                                                        //               )[0]
-                                                        //               .toString(),
-                                                        //       style:
-                                                        //           const TextStyle(
-                                                        //         letterSpacing:
-                                                        //             2,
-                                                        //         fontSize: 20,
-                                                        //         fontWeight:
-                                                        //             FontWeight
-                                                        //                 .w500,
-                                                        //       ),
-                                                        //     );
-                                                        //   },
-                                                        // ),
+
                                                         Text(
                                                           'Phương',
                                                           style:
@@ -497,17 +462,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ],
                                                 ),
                                               ),
-                                              // onTap: () => Navigator.push(
-                                              //   context,
-                                              //   MaterialPageRoute(
-                                              //     builder: (context) =>
-                                              //         const SearchPage(
-                                              //       query: '',
-                                              //       fromHome: true,
-                                              //       autofocus: true,
-                                              //     ),
-                                              //   ),
-                                              // ),
+                                              onTap: () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const SearchPage(
+                                                    query: '',
+                                                    fromHome: true,
+                                                    autofocus: true,
+                                                  ),
+                                                ),
+                                              ),
                                             );
                                           },
                                         ),

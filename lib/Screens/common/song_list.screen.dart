@@ -53,134 +53,6 @@ class _SongsListScreenState extends State<SongsListScreen> {
     _scrollController.dispose();
   }
 
-  // void _fetchSongs() {
-  //   loading = true;
-  //   try {
-  //     switch (widget.listItem['type'].toString()) {
-  //       case 'songs':
-  //         SaavnAPI()
-  //             .fetchSongSearchResults(
-  //           searchQuery: widget.listItem['id'].toString(),
-  //           page: page,
-  //         )
-  //             .then((value) {
-  //           setState(() {
-  //             songList.addAll(value['songs'] as List);
-  //             fetched = true;
-  //             loading = false;
-  //           });
-  //           if (value['error'].toString() != '') {
-  //             ShowSnackBar().showSnackBar(
-  //               context,
-  //               'Error: ${value["error"]}',
-  //               duration: const Duration(seconds: 3),
-  //             );
-  //           }
-  //         });
-  //         break;
-  //       case 'album':
-  //         SaavnAPI()
-  //             .fetchAlbumSongs(widget.listItem['id'].toString())
-  //             .then((value) {
-  //           setState(() {
-  //             songList = value['songs'] as List;
-  //             fetched = true;
-  //             loading = false;
-  //           });
-  //           if (value['error'].toString() != '') {
-  //             ShowSnackBar().showSnackBar(
-  //               context,
-  //               'Error: ${value["error"]}',
-  //               duration: const Duration(seconds: 3),
-  //             );
-  //           }
-  //         });
-  //         break;
-  //       case 'playlist':
-  //         SaavnAPI()
-  //             .fetchPlaylistSongs(widget.listItem['id'].toString())
-  //             .then((value) {
-  //           setState(() {
-  //             songList = value['songs'] as List;
-  //             fetched = true;
-  //             loading = false;
-  //           });
-  //           if (value['error'] != null && value['error'].toString() != '') {
-  //             ShowSnackBar().showSnackBar(
-  //               context,
-  //               'Error: ${value["error"]}',
-  //               duration: const Duration(seconds: 3),
-  //             );
-  //           }
-  //         });
-  //         break;
-  //       case 'mix':
-  //         SaavnAPI()
-  //             .getSongFromToken(
-  //           widget.listItem['perma_url'].toString().split('/').last,
-  //           'mix',
-  //         )
-  //             .then((value) {
-  //           setState(() {
-  //             songList = value['songs'] as List;
-  //             fetched = true;
-  //             loading = false;
-  //           });
-
-  //           if (value['error'] != null && value['error'].toString() != '') {
-  //             ShowSnackBar().showSnackBar(
-  //               context,
-  //               'Error: ${value["error"]}',
-  //               duration: const Duration(seconds: 3),
-  //             );
-  //           }
-  //         });
-  //         break;
-  //       case 'show':
-  //         SaavnAPI()
-  //             .getSongFromToken(
-  //           widget.listItem['perma_url'].toString().split('/').last,
-  //           'show',
-  //         )
-  //             .then((value) {
-  //           setState(() {
-  //             songList = value['songs'] as List;
-  //             fetched = true;
-  //             loading = false;
-  //           });
-
-  //           if (value['error'] != null && value['error'].toString() != '') {
-  //             ShowSnackBar().showSnackBar(
-  //               context,
-  //               'Error: ${value["error"]}',
-  //               duration: const Duration(seconds: 3),
-  //             );
-  //           }
-  //         });
-  //         break;
-  //       default:
-  //         setState(() {
-  //           fetched = true;
-  //           loading = false;
-  //         });
-  //         ShowSnackBar().showSnackBar(
-  //           context,
-  //           'Error: Unsupported Type ${widget.listItem['type']}',
-  //           duration: const Duration(seconds: 3),
-  //         );
-  //         break;
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       fetched = true;
-  //       loading = false;
-  //     });
-  //     Logger.root.severe(
-  //       'Error in song_list with type ${widget.listItem["type"]}: $e',
-  //     );
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return GradientContainer(
@@ -196,6 +68,7 @@ class _SongsListScreenState extends State<SongsListScreen> {
               //---------------------------Có data-----------------------------
               body: BouncyPlaylistHeaderScrollView(
                 scrollController: _scrollController,
+                
                 actions: [
                   // if (songList.isNotEmpty)
                   //   MultiDownloadButton(

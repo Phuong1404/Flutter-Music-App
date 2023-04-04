@@ -971,275 +971,267 @@ class NowPlayingStream extends StatelessWidget {
         //     queue.length,
         //   ),
         // );
-        return ReorderableListView(
-          buildDefaultDragHandles: false,
-          header: SizedBox(
-            height: head ? headHeight : 0,
-          ),
-          onReorder: (int oldIndex, int newIndex) {},
-          scrollController: scrollController,
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 10),
-          shrinkWrap: true,
-          children: <Widget>[
-            Dismissible(
-              key: const ValueKey(0),
-              direction: DismissDirection.horizontal,
-              onDismissed: (dir) {
-                // audioHandler.removeQueueItemAt(index);
-              },
-              child: ListTileTheme(
-                selectedColor: Colors.transparent,
-                child: ListTile(
-                  contentPadding:
-                      const EdgeInsets.only(left: 16.0, right: 10.0),
-                  selected: false,
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    // children: (index == queueState.queueIndex)
-                    //     ? [
-                    //         IconButton(
-                    //           icon: const Icon(
-                    //             Icons.bar_chart_rounded,
-                    //           ),
-                    //           tooltip: 'Playing',
-                    //           onPressed: () {},
-                    //         )
-                    //       ]
-                    children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.bar_chart_rounded,
+        return Theme(
+            data: ThemeData(canvasColor: Colors.black),
+            child: ReorderableListView(
+              buildDefaultDragHandles: false,
+              header: SizedBox(
+                height: head ? headHeight : 0,
+              ),
+              onReorder: (int oldIndex, int newIndex) {},
+              scrollController: scrollController,
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 10),
+              shrinkWrap: true,
+              children: <Widget>[
+                Dismissible(
+                  key: const ValueKey(0),
+                  direction: DismissDirection.horizontal,
+                  onDismissed: (dir) {
+                    // audioHandler.removeQueueItemAt(index);
+                  },
+                  child: ListTileTheme(
+                    selectedColor: Colors.transparent,
+                    child: ListTile(
+                      contentPadding:
+                          const EdgeInsets.only(left: 16.0, right: 10.0),
+                      selected: false,
+                      trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          // children: (index == queueState.queueIndex)
+                          //     ? [
+                          //         IconButton(
+                          //           icon: const Icon(
+                          //             Icons.bar_chart_rounded,
+                          //           ),
+                          //           tooltip: 'Playing',
+                          //           onPressed: () {},
+                          //         )
+                          //       ]
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.bar_chart_rounded,
+                              ),
+                              color: Color.fromARGB(255, 4, 192, 60),
+                              tooltip: 'Playing',
+                              onPressed: () {},
+                            )
+                          ]),
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7.0),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: SizedBox.square(
+                              dimension: 50,
+                              child: CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                errorWidget: (BuildContext context, _, __) =>
+                                    const Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                    'assets/cover.jpg',
+                                  ),
+                                ),
+                                placeholder: (BuildContext context, _) =>
+                                    const Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                    'assets/cover.jpg',
+                                  ),
+                                ),
+                                imageUrl:
+                                    'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
+                              ),
+                            ),
                           ),
-                          color: Color.fromARGB(255, 4, 192, 60),
-                          tooltip: 'Playing',
-                          onPressed: () {},
-                        )
-                      ]
+                        ],
+                      ),
+                      title: Text(
+                        'Xin em',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        'Bùi Anh Tuấn',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                      onTap: () {},
                     ),
-                  leading: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Card(
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(7.0),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child:
-                            SizedBox.square(
-                          dimension: 50,
-                          child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            errorWidget: (BuildContext context, _, __) =>
-                                const Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage(
-                                'assets/cover.jpg',
-                              ),
-                            ),
-                            placeholder: (BuildContext context, _) =>
-                                const Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage(
-                                'assets/cover.jpg',
-                              ),
-                            ),
-                            imageUrl:
-                                'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
-                  title: Text(
-                    'Xin em',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600, color: Colors.white
-                        ),
-                  ),
-                  subtitle: Text(
-                    'Bùi Anh Tuấn',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                  onTap: () {
-                  },
                 ),
-              ),
-            ),
-            Dismissible(
-              key: const ValueKey(1),
-              direction: DismissDirection.horizontal,
-              onDismissed: (dir) {
-                // audioHandler.removeQueueItemAt(index);
-              },
-              child: ListTileTheme(
-                selectedColor: Colors.transparent,
-                child: ListTile(
-                  contentPadding:
-                      const EdgeInsets.only(left: 16.0, right: 10.0),
-                  selected: false,
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      LikeButton(
-                          // mediaItem: queue[index],
-                          ),
-                      DownloadButton(icon: 'download', size: 25.0, data: {}),
-                      ReorderableDragStartListener(
-                        key: Key('1'),
-                        index: 1,
-                        enabled: true,
-                        child: const Icon(
-                          Icons.drag_handle_rounded,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  leading: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Card(
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(7.0),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child:
-                            SizedBox.square(
-                          dimension: 50,
-                          child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            errorWidget: (BuildContext context, _, __) =>
-                                const Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage(
-                                'assets/cover.jpg',
-                              ),
-                            ),
-                            placeholder: (BuildContext context, _) =>
-                                const Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage(
-                                'assets/cover.jpg',
-                              ),
-                            ),
-                            imageUrl:
-                                'https://c-cl.cdn.smule.com/rs-s94/arr/18/66/011b2306-b067-44b7-ba7a-d7c3717fe92a.jpg',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  title: Text(
-                    'Thương em là điều anh không thể ngờ',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600, color: Colors.white
-                        ),
-                  ),
-                  subtitle: Text(
-                    'Noo Phước Thịnh',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                  onTap: () {
+                Dismissible(
+                  key: const ValueKey(1),
+                  direction: DismissDirection.horizontal,
+                  onDismissed: (dir) {
+                    // audioHandler.removeQueueItemAt(index);
                   },
+                  child: ListTileTheme(
+                    selectedColor: Colors.transparent,
+                    child: ListTile(
+                      contentPadding:
+                          const EdgeInsets.only(left: 16.0, right: 10.0),
+                      selected: false,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          LikeButton(
+                              // mediaItem: queue[index],
+                              ),
+                          DownloadButton(
+                              icon: 'download', size: 25.0, data: {}),
+                          ReorderableDragStartListener(
+                            key: Key('1'),
+                            index: 1,
+                            enabled: true,
+                            child: const Icon(
+                              Icons.drag_handle_rounded,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7.0),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: SizedBox.square(
+                              dimension: 50,
+                              child: CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                errorWidget: (BuildContext context, _, __) =>
+                                    const Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                    'assets/cover.jpg',
+                                  ),
+                                ),
+                                placeholder: (BuildContext context, _) =>
+                                    const Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                    'assets/cover.jpg',
+                                  ),
+                                ),
+                                imageUrl:
+                                    'https://c-cl.cdn.smule.com/rs-s94/arr/18/66/011b2306-b067-44b7-ba7a-d7c3717fe92a.jpg',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      title: Text(
+                        'Thương em là điều anh không thể ngờ',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        'Noo Phước Thịnh',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                      onTap: () {},
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          Dismissible(
-              key: const ValueKey(2),
-              direction: DismissDirection.horizontal,
-              onDismissed: (dir) {
-                // audioHandler.removeQueueItemAt(index);
-              },
-              child: ListTileTheme(
-                selectedColor: Colors.transparent,
-                child: ListTile(
-                  contentPadding:
-                      const EdgeInsets.only(left: 16.0, right: 10.0),
-                  selected: false,
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      LikeButton(
-                          // mediaItem: queue[index],
-                          ),
-                      DownloadButton(icon: 'download', size: 25.0, data: {}),
-                      ReorderableDragStartListener(
-                        key: Key('2'),
-                        index: 1,
-                        enabled: true,
-                        child: const Icon(
-                          Icons.drag_handle_rounded,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  leading: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Card(
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(7.0),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child:
-                            SizedBox.square(
-                          dimension: 50,
-                          child: CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            errorWidget: (BuildContext context, _, __) =>
-                                const Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage(
-                                'assets/cover.jpg',
-                              ),
-                            ),
-                            placeholder: (BuildContext context, _) =>
-                                const Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage(
-                                'assets/cover.jpg',
-                              ),
-                            ),
-                            imageUrl:
-                                'https://avatar-ex-swe.nixcdn.com/song/2020/06/15/b/0/f/a/1592231470406_640.jpg',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  title: Text(
-                    'Cưới nhau đi(Yes I Do)',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600, color: Colors.white
-                        ),
-                  ),
-                  subtitle: Text(
-                    'Bùi Anh Tuấn, Hiền Hồ',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onTap: () {
+                Dismissible(
+                  key: const ValueKey(2),
+                  direction: DismissDirection.horizontal,
+                  onDismissed: (dir) {
+                    // audioHandler.removeQueueItemAt(index);
                   },
-                ),
-              ),
-            )
-          
-          ],
-        );
-
+                  child: ListTileTheme(
+                    selectedColor: Colors.transparent,
+                    child: ListTile(
+                      contentPadding:
+                          const EdgeInsets.only(left: 16.0, right: 10.0),
+                      selected: false,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          LikeButton(
+                              // mediaItem: queue[index],
+                              ),
+                          DownloadButton(
+                              icon: 'download', size: 25.0, data: {}),
+                          ReorderableDragStartListener(
+                            key: Key('2'),
+                            index: 1,
+                            enabled: true,
+                            child: const Icon(
+                              Icons.drag_handle_rounded,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(7.0),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: SizedBox.square(
+                              dimension: 50,
+                              child: CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                errorWidget: (BuildContext context, _, __) =>
+                                    const Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                    'assets/cover.jpg',
+                                  ),
+                                ),
+                                placeholder: (BuildContext context, _) =>
+                                    const Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                    'assets/cover.jpg',
+                                  ),
+                                ),
+                                imageUrl:
+                                    'https://avatar-ex-swe.nixcdn.com/song/2020/06/15/b/0/f/a/1592231470406_640.jpg',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      title: Text(
+                        'Cưới nhau đi(Yes I Do)',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        'Bùi Anh Tuấn, Hiền Hồ',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onTap: () {},
+                    ),
+                  ),
+                )
+              ],
+            ));
         // return ReorderableListView.builder(
         //   header: SizedBox(
         //     height: head ? headHeight : 0,

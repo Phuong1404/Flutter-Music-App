@@ -18,11 +18,8 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return GradientContainer(
         child: Scaffold(
-            appBar: AppBar(
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              toolbarHeight: 0,
-            ),
+            resizeToAvoidBottomInset: false,
+            backgroundColor: Colors.transparent,
             extendBodyBehindAppBar: true,
             body: SafeArea(
               child: Stack(

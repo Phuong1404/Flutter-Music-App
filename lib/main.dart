@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:music_app/Screens/auth/register.screen.dart';
-import 'package:music_app/Screens/auth/signin.screen.dart';
-import 'package:music_app/Screens/auth/login.screen.dart';
-import 'package:music_app/Screens/common/song_list.screen.dart';
+import 'package:music_app/Screens/player/audioplayer.screen.dart';
 import 'package:music_app/Screens/start/start.screen.dart';
 import 'package:music_app/route.dart';
-import 'Screens/home/home.screen.dart';
-import 'Screens/start/splash.screen.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_core/firebase_core.dart';
 
-void main() async{
+void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp();
   // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -33,7 +26,7 @@ class MyApp extends StatelessWidget {
   //   // print(fcmToken);
   //   // print('--------------------------------');
   // }
-  
+
   @override
   Widget build(BuildContext context) {
     // get_token();
@@ -57,7 +50,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Color.fromARGB(255, 42, 215, 94),
       ),
-      home: StartScreen(),
+      home: PlayScreen(),
       routes: routes,
     );
   }

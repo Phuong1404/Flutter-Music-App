@@ -18,12 +18,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final Size size = MediaQuery.of(context).size;
     return GradientContainer(
         child: Scaffold(
-            appBar: AppBar(
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              toolbarHeight: 0,
-            ),
-            extendBodyBehindAppBar: true,
+            resizeToAvoidBottomInset: false,
+            backgroundColor: Colors.transparent,
             body: SafeArea(
                 child: Stack(children: [
               const GradientContainer(

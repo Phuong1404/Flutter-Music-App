@@ -12,6 +12,7 @@ Future<void> showTextInputDialog({
     builder: (BuildContext ctxt) {
       final controller = TextEditingController(text: initialText);
       return AlertDialog(
+        backgroundColor: Color.fromARGB(255, 43, 43, 43),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -23,7 +24,7 @@ Future<void> showTextInputDialog({
                 Text(
                   title,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Color.fromARGB(255, 4, 192, 60),
                   ),
                 ),
               ],
@@ -33,6 +34,24 @@ Future<void> showTextInputDialog({
               controller: controller,
               keyboardType: keyboardType,
               textAlignVertical: TextAlignVertical.bottom,
+              style: TextStyle(color: Colors.white),
+              cursorColor:Color.fromARGB(255, 4, 192, 60),
+              decoration: InputDecoration(
+                hintText: 'Playlist Name',
+                  hintStyle: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromARGB(255, 4, 192, 60)),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromARGB(255, 4, 192, 60)),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromARGB(255, 4, 192, 60)),
+                ),
+              ),
               onSubmitted: (value) {
                 onSubmitted(value);
               },
@@ -42,9 +61,7 @@ Future<void> showTextInputDialog({
         actions: [
           TextButton(
             style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.grey[700],
+              foregroundColor: Colors.white,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -53,17 +70,15 @@ Future<void> showTextInputDialog({
           ),
           TextButton(
             style: TextButton.styleFrom(
-              foregroundColor:
-                  Theme.of(context).colorScheme.secondary == Colors.white
-                      ? Colors.black
-                      : Colors.white,
-              backgroundColor: Theme.of(context).colorScheme.secondary,
+              foregroundColor: Colors.black,
+              backgroundColor: Color.fromARGB(255, 4, 192, 60),
             ),
             onPressed: () {
               onSubmitted(controller.text.trim());
             },
             child: Text(
               'Ok',
+              style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(
