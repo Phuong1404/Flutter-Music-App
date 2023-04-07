@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:music_app/API/AuthAPI.api.dart';
+import 'package:music_app/Services/store_token.service.dart';
+import 'package:music_app/Widgets/alert_notification.widget.dart';
 import 'package:provider/provider.dart';
 import 'package:music_app/Widgets/gradient_container.widget.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -11,7 +15,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  //Khai báo các controller
   bool _isObscure = true;
+  bool _validateUsername = false;
+  bool _validatePassword = false;
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             child: TextField(
                               //controller: controller,
+                              controller: usernameController,
                               textAlignVertical: TextAlignVertical.center,
                               textCapitalization: TextCapitalization.sentences,
                               keyboardType: TextInputType.name,
@@ -105,13 +115,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 border: InputBorder.none,
-                                hintText: 'Email or Username',
-                                // AppLocalizations.of(context)!
-                                //     .enterName,
-                                hintStyle: const TextStyle(
+                                hintText: 'Username',
+                                hintStyle: TextStyle(
                                   color: Colors.white70,
+                                  // fontSize: _validateUsername ? 13.5 : null
                                 ),
                               ),
+                              // onChanged: (text) => {
+                              //   if (_validateUsername == true)
+                              //     {
+                              //       setState(() {
+                              //         _validateUsername = false;
+                              //       })
+                              //     }
+                              // },
                             ),
                           ),
                           SizedBox(
@@ -138,6 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             child: TextField(
                               //controller: controller,
+                              controller: passwordController,
                               obscureText: _isObscure,
                               textAlignVertical: TextAlignVertical.center,
                               textCapitalization: TextCapitalization.sentences,
@@ -165,26 +183,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 border: InputBorder.none,
                                 hintText: 'Password',
-
-                                // AppLocalizations.of(context)!
-                                //     .enterName,
-                                hintStyle: const TextStyle(
+                                hintStyle: TextStyle(
                                   color: Colors.white70,
+                                  // fontSize: _validatePassword ? 13.5 : null
                                 ),
                               ),
-                              // onSubmitted: (String value) async {
-                              //   if (value.trim() == '') {
-                              //     await _addUserData(
-                              //       AppLocalizations.of(context)!
-                              //           .guest,
-                              //     );
-                              //   } else {
-                              //     await _addUserData(value.trim());
-                              //   }
-                              //   Navigator.popAndPushNamed(
-                              //     context,
-                              //     '/pref',
-                              //   );
+                              // onChanged: (text) => {
+                              //   if (_validatePassword == true)
+                              //     {
+                              //       setState(() {
+                              //         _validatePassword = false;
+                              //       })
+                              //     }
                               // },
                             ),
                           ),
@@ -203,9 +213,44 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 20,
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
+                          final username = usernameController.text;
+                          final password = passwordController.text;
+                          if (username.isNotEmpty && password.isNotEmpty) {
+                            username.replaceAll(" ", "");
+                            password.replaceAll(" ", "");
+                            final data =
+                                await AuthApi().Login(username, password);
+                            if (data['status_code'] == 400) {
+                              AlertNotification err_alert =
+                                  new AlertNotification(
+                                title: 'Error',
+                                message: data['error'],
+                              );
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return err_alert;
+                                },
+                              );
+                            }
+                            else{
+                              await StoreToken.storageToken(data['data']['id']);
                               Navigator.popAndPushNamed(context, '/home');
-                            },
+                            }
+                          } else {
+                            AlertNotification err_alert = new AlertNotification(
+                              title: 'Error',
+                              message: 'Username and Password didn\'t empty',
+                            );
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return err_alert;
+                              },
+                            );
+                          }
+                        },
                         child: Container(
                           margin: const EdgeInsets.symmetric(
                             vertical: 10.0,
@@ -239,7 +284,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Column(
                         children: [
                           GestureDetector(

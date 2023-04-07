@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:music_app/API/AuthAPI.api.dart';
+import 'package:music_app/Services/store_token.service.dart';
+import 'package:music_app/Widgets/loadding.widget.dart';
 import 'package:provider/provider.dart';
 import 'package:music_app/Widgets/gradient_container.widget.dart';
 
 class RegisterScreen extends StatefulWidget {
+  final String email;
+  const RegisterScreen({super.key, required this.email});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 
@@ -12,6 +18,21 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   bool _isObscure = true;
+  bool _isObscure1 = true;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController repasswordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ],
                                 ),
                                 child: TextField(
-                                  //controller: controller,
+                                  controller: nameController,
                                   textAlignVertical: TextAlignVertical.center,
                                   cursorColor: Color.fromARGB(255, 4, 192, 60),
                                   textCapitalization:
@@ -102,20 +123,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Colors.white70,
                                     ),
                                   ),
-                                  // onSubmitted: (String value) async {
-                                  //   if (value.trim() == '') {
-                                  //     await _addUserData(
-                                  //       AppLocalizations.of(context)!
-                                  //           .guest,
-                                  //     );
-                                  //   } else {
-                                  //     await _addUserData(value.trim());
-                                  //   }
-                                  //   Navigator.popAndPushNamed(
-                                  //     context,
-                                  //     '/pref',
-                                  //   );
-                                  // },
                                 ),
                               ),
                               SizedBox(
@@ -141,7 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ],
                                 ),
                                 child: TextField(
-                                  //controller: controller,
+                                  controller: usernameController,
                                   textAlignVertical: TextAlignVertical.center,
                                   textCapitalization:
                                       TextCapitalization.sentences,
@@ -163,20 +170,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Colors.white70,
                                     ),
                                   ),
-                                  // onSubmitted: (String value) async {
-                                  //   if (value.trim() == '') {
-                                  //     await _addUserData(
-                                  //       AppLocalizations.of(context)!
-                                  //           .guest,
-                                  //     );
-                                  //   } else {
-                                  //     await _addUserData(value.trim());
-                                  //   }
-                                  //   Navigator.popAndPushNamed(
-                                  //     context,
-                                  //     '/pref',
-                                  //   );
-                                  // },
                                 ),
                               ),
                               SizedBox(
@@ -202,7 +195,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ],
                                 ),
                                 child: TextField(
-                                  //controller: controller,
+                                  controller: passwordController,
                                   obscureText: _isObscure,
                                   textAlignVertical: TextAlignVertical.center,
                                   textCapitalization:
@@ -240,20 +233,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Colors.white70,
                                     ),
                                   ),
-                                  // onSubmitted: (String value) async {
-                                  //   if (value.trim() == '') {
-                                  //     await _addUserData(
-                                  //       AppLocalizations.of(context)!
-                                  //           .guest,
-                                  //     );
-                                  //   } else {
-                                  //     await _addUserData(value.trim());
-                                  //   }
-                                  //   Navigator.popAndPushNamed(
-                                  //     context,
-                                  //     '/pref',
-                                  //   );
-                                  // },
                                 ),
                               ),
                               SizedBox(
@@ -279,8 +258,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ],
                                 ),
                                 child: TextField(
-                                  //controller: controller,
-                                  obscureText: _isObscure,
+                                  controller: repasswordController,
+                                  obscureText: _isObscure1,
                                   textAlignVertical: TextAlignVertical.center,
                                   textCapitalization:
                                       TextCapitalization.sentences,
@@ -291,7 +270,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     suffixIcon: IconButton(
                                         padding:
                                             EdgeInsets.only(top: 2, left: 10),
-                                        icon: Icon(_isObscure
+                                        icon: Icon(_isObscure1
                                             ? Icons.visibility_off
                                             : Icons.visibility),
                                         color:
@@ -299,7 +278,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         splashColor: Colors.transparent,
                                         onPressed: () {
                                           setState(() {
-                                            _isObscure = !_isObscure;
+                                            _isObscure1 = !_isObscure1;
                                           });
                                         }),
                                     focusedBorder: const UnderlineInputBorder(
@@ -317,37 +296,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Colors.white70,
                                     ),
                                   ),
-                                  // onSubmitted: (String value) async {
-                                  //   if (value.trim() == '') {
-                                  //     await _addUserData(
-                                  //       AppLocalizations.of(context)!
-                                  //           .guest,
-                                  //     );
-                                  //   } else {
-                                  //     await _addUserData(value.trim());
-                                  //   }
-                                  //   Navigator.popAndPushNamed(
-                                  //     context,
-                                  //     '/pref',
-                                  //   );
-                                  // },
                                 ),
                               ),
                               SizedBox(
                                 height: 20,
                               ),
                               GestureDetector(
-                                // onTap: () async {
-                                //   if (controller.text.trim() == '') {
-                                //     await _addUserData('Guest');
-                                //   } else {
-                                //     await _addUserData(
-                                //       controller.text.trim(),
-                                //     );
-                                //   }
-                                //   Navigator.popAndPushNamed(
-                                //       context, '/pref');
-                                // },
+                                onTap: () async {
+                                  final name = nameController.text;
+                                  final username = usernameController.text;
+                                  final password = passwordController.text;
+                                  final repassword = repasswordController.text;
+                                  if (name.isNotEmpty &&
+                                      username.isNotEmpty &&
+                                      password.isNotEmpty &&
+                                      repassword.isNotEmpty) {
+                                    if (repassword == password) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          context = context;
+                                          return const Loading();
+                                        },
+                                      );
+                                      final data = await AuthApi().Signup(name,
+                                          widget.email, username, password);
+                                      if (data['status_code'] != 400) {
+                                        final login = await AuthApi()
+                                            .Login(username, password);
+                                        await StoreToken.storageToken(
+                                            login['data']['id']);
+                                        Navigator.pop(context);
+                                        Navigator.popAndPushNamed(
+                                            context, '/home');
+                                      }
+                                    }
+                                  }
+
+                                  // Future.delayed(
+                                  //     const Duration(milliseconds: 2000), () {
+
+                                  // });
+                                },
                                 child: Container(
                                   margin: const EdgeInsets.symmetric(
                                     vertical: 10.0,

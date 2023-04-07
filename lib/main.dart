@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:music_app/Screens/player/audioplayer.screen.dart';
+import 'package:music_app/Screens/profile/profile.screen.dart';
 import 'package:music_app/Screens/start/start.screen.dart';
 import 'package:music_app/route.dart';
 
@@ -50,8 +51,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Color.fromARGB(255, 42, 215, 94),
       ),
-      home: PlayScreen(),
+      home: StartScreen(),
       routes: routes,
+      onGenerateRoute: (RouteSettings settings) {
+        if (settings.name == '/player') {
+          return PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (_, __, ___) => const PlayScreen(),
+          );
+        }
+        // return HandleRoute.handleRoute(settings.name);
+      },
     );
   }
 }

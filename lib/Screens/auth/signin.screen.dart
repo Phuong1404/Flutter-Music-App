@@ -1,6 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
+import 'package:music_app/API/AuthAPI.api.dart';
+import 'package:music_app/Screens/auth/register.screen.dart';
+import 'package:music_app/Widgets/alert_notification.widget.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +17,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  TextEditingController emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return GradientContainer(
@@ -107,7 +111,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                         ],
                                       ),
                                       child: TextField(
-                                        //controller: controller,
+                                        controller: emailController,
                                         cursorColor:
                                             Color.fromARGB(255, 4, 192, 60),
                                         style: TextStyle(color: Colors.white),
@@ -160,15 +164,48 @@ class _SignInScreenState extends State<SignInScreen> {
                                     ),
                                     GestureDetector(
                                       onTap: () async {
-                                        // if (controller.text.trim() == '') {
-                                        //   await _addUserData('Guest');
-                                        // } else {
-                                        //   await _addUserData(
-                                        //     controller.text.trim(),
-                                        //   );
-                                        // }
-                                        Navigator.popAndPushNamed(
-                                            context, '/register');
+                                        final email1 = emailController.text;
+                                        if (email1.isNotEmpty) {
+                                          email1.replaceAll(" ", "");
+                                          final data = await AuthApi()
+                                              .Emailexist(email1);
+                                          if (data['status_code'] == 400) {
+                                            AlertNotification err_alert =
+                                                new AlertNotification(
+                                              title: 'Error',
+                                              message: data['error'],
+                                            );
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return err_alert;
+                                              },
+                                            );
+                                          } else {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      RegisterScreen(
+                                                        email: email1,
+                                                      )),
+                                            );
+                                          }
+                                        } else {
+                                          AlertNotification err_alert =
+                                              new AlertNotification(
+                                            title: 'Error',
+                                            message: 'Email didn\'t empty',
+                                          );
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return err_alert;
+                                            },
+                                          );
+                                        }
+                                        // Navigator.popAndPushNamed(
+                                        //     context, '/register');
                                       },
                                       child: Container(
                                         margin: const EdgeInsets.symmetric(

@@ -11,6 +11,7 @@ class ArtistScreen extends StatefulWidget {
 
 class _ArtistScreenState extends State<ArtistScreen>
     with AutomaticKeepAliveClientMixin<ArtistScreen> {
+
   @override
   Widget build(BuildContext cntxt) {
     // TODO: implement build

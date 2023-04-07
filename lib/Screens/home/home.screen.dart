@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //   defaultValue: ['Home', 'Top Charts', 'YouTube', 'Library'],
   // ) as List;
 
-  List sectionsToShow=['Home', 'Top Charts', 'Artists', 'Library'] as List;
+  List sectionsToShow = ['Home', 'Top Charts', 'Artists', 'Library'] as List;
   Future<bool> handleWillPop(BuildContext context) async {
     // final now = DateTime.now();
     // final backButtonHasNotBeenPressedOrSnackBarHasBeenClosed =
@@ -49,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // }
     return true;
   }
-
 
   void _onItemTapped(int index) {
     _selectedIndex.value = index;
@@ -112,30 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   titlePadding: const EdgeInsets.only(bottom: 40.0),
                   centerTitle: true,
-                  background: ShaderMask(
-                    shaderCallback: (rect) {
-                      return LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withOpacity(0.8),
-                          Colors.black.withOpacity(0.1),
-                        ],
-                      ).createShader(
-                        Rect.fromLTRB(0, 0, rect.width, rect.height),
-                      );
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: Image(
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                      image: AssetImage(
-                        Theme.of(context).brightness == Brightness.dark
-                            ? 'assets/header-dark.jpg'
-                            : 'assets/header.jpg',
-                      ),
-                    ),
-                  ),
+                  background: null,
                 ),
               ),
               SliverList(
@@ -161,13 +137,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ListTile(
                       title: Text(
-                        'My Music',
+                        'Top Charts',
                         style: TextStyle(color: Colors.white),
                       ),
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 20.0),
                       leading: Icon(
-                        MdiIcons.folderMusic,
+                        Icons.trending_up_rounded,
                         color: Colors.white,
                       ),
                       onTap: () {
@@ -184,57 +160,50 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ListTile(
                       title: Text(
-                        'Downloads',
+                        'Library',
                         style: TextStyle(color: Colors.white),
                       ),
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 20.0),
                       leading: Icon(
-                        Icons.download_done_rounded,
+                        Icons.my_library_music_rounded,
                         color: Colors.white,
                       ),
                       onTap: () {
-                        // Navigator.pop(context);
-                        // Navigator.pushNamed(context, '/downloads');
+                        Navigator.of(context).pop();
+                        _pageController.jumpToPage(1);
                       },
                     ),
                     ListTile(
                       title: Text(
-                        'Playlists',
+                        'My Account',
                         style: TextStyle(color: Colors.white),
                       ),
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 20.0),
                       leading: Icon(
-                        Icons.playlist_play_rounded,
+                        Icons.account_circle,
+                        color: Colors.white,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/profile');
+                      },
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Log Out',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 20.0),
+                      leading: Icon(
+                        Icons.logout,
                         color: Colors.white,
                       ),
                       onTap: () {
                         // Navigator.pop(context);
                         // Navigator.pushNamed(context, '/playlists');
-                      },
-                    ),
-                    ListTile(
-                      title: Text(
-                        'Settings',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 20.0),
-                      leading: Icon(
-                        Icons
-                            .settings_rounded, // miscellaneous_services_rounded,
-                        color: Colors.white,
-                      ),
-                      onTap: () {
-                        // Navigator.pop(context);
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) =>
-                        //         SettingPage(callback: callback),
-                        //   ),
-                        // );
                       },
                     ),
                   ],
@@ -352,7 +321,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           CrossAxisAlignment
                                                               .end,
                                                       children: [
-
                                                         Text(
                                                           'Phương',
                                                           style:
@@ -421,12 +389,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     const EdgeInsets.all(2.0),
                                                 // margin: EdgeInsets.zero,
                                                 decoration: BoxDecoration(
-                                                  
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                     10.0,
                                                   ),
-                                                  color: Color.fromARGB(255, 31, 33, 32),
+                                                  color: Color.fromARGB(
+                                                      255, 31, 33, 32),
                                                   boxShadow: const [
                                                     BoxShadow(
                                                       color: Colors.black26,
@@ -437,7 +405,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ],
                                                 ),
                                                 child: Row(
-                                                  
                                                   children: [
                                                     const SizedBox(
                                                       width: 10.0,
@@ -511,14 +478,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           TopChartScreen(
-                              pageController: _pageController,
-                            ),
+                            pageController: _pageController,
+                          ),
                           ArtistScreen(
-                              pageController: _pageController,
-                            ),
+                            pageController: _pageController,
+                          ),
                           LibraryScreen()
                           // if (sectionsToShow.contains('Top Charts'))
-                            
+
                           //   TopChartScreen(
                           //     pageController: _pageController,
                           //   ),
