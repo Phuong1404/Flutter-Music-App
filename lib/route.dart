@@ -19,7 +19,6 @@ final Map<String, WidgetBuilder> routes = {
   SignInScreen.routeName: (context) => SignInScreen(),
   StartScreen.routeName: (context) => StartScreen(),
   HomeScreen.routeName:(context) => HomeScreen(),
-  SongsListScreen.routeName:(context) => SongsListScreen(),
   NowPlaying.routeName:(context)=>NowPlaying(),
   RecentlyPlayed.routeName:(context)=>RecentlyPlayed(),
   LikedSongs.routeName:(context)=>LikedSongs(playlistName: '',),

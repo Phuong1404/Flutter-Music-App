@@ -4,8 +4,10 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:logging/logging.dart';
 
+import 'StaticApi.config.dart';
+
 class AuthApi {
-  final String Base_Url = 'http://localhost:8888';
+  final String Base_Url = ConfigApi().Base_Url;
 
   Future<Map> Login(String Username, String Password) async {
     try {

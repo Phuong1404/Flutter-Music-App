@@ -329,7 +329,7 @@ class _SearchPageState extends State<SearchPage> {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       GestureDetector(
-                                         onTap: () {
+                                        onTap: () {
                                           Navigator.push(
                                             context,
                                             PageRouteBuilder(
@@ -347,7 +347,6 @@ class _SearchPageState extends State<SearchPage> {
                                               ),
                                             ),
                                           );
-                                          
                                         },
                                         child: Row(
                                           children: [
@@ -726,7 +725,7 @@ class _SearchPageState extends State<SearchPage> {
                                                 __,
                                                 ___,
                                               ) =>
-                                                  SongsListScreen(),
+                                                  SongsListScreen(Id: "0"),
                                             ),
                                           );
                                         },
@@ -1061,7 +1060,7 @@ class _SearchPageState extends State<SearchPage> {
                                                 __,
                                                 ___,
                                               ) =>
-                                                  SongsListScreen(),
+                                                  SongsListScreen(Id:"0"),
                                             ),
                                           );
                                         },

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app/API/ArtistAPI.api.dart';
 import 'package:music_app/Widgets/artist_like_button.screen.dart';
 import 'package:music_app/Widgets/bouncy_sliver_scroll_view.widget.dart';
 import 'package:music_app/Widgets/copy_clipboard.widget.dart';
@@ -31,9 +32,16 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
   bool status = false;
   String category = '';
   String sortOrder = '';
-  Map<String, List> data = {};
+  Map dataOneArtist={};
   bool fetched = false;
   final ScrollController _scrollController = ScrollController();
+
+  Future<void>getDataOneArtist(String Id) async{
+    final data1 = await ArtistApi().getOneArtist(Id);
+    if (data1.isNotEmpty) {
+      dataOneArtist = data1;
+    }
+  }
 
   @override
   void dispose() {
@@ -43,6 +51,9 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!fetched){
+      getDataOneArtist(widget.data['id'],);
+    }
     double boxSize =
         MediaQuery.of(context).size.height > MediaQuery.of(context).size.width
             ? MediaQuery.of(context).size.width / 2
@@ -77,12 +88,12 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                     tooltip: 'Share',
                     onPressed: () {
                       Share.share(
-                        '000000000000000000000000000000000',
+                        widget.data['name'],
                       );
                     },
                   ),
                   ArtistLikeButton(
-                    data: widget.data,
+                    data: {},
                     size: 27.0,
                   ),
                   PlaylistPopupMenu(
@@ -90,12 +101,12 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                     title: 'Songs',
                   ),
                 ],
-                title: 'Xin em',
+                title: widget.data['name'],
                 placeholderImage: 'assets/artist.png',
-                imageUrl:
-                    'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
+                imageUrl: widget.data['avatar'],
                 sliverList: SliverList(
-                  delegate: SliverChildListDelegate(
+                  delegate: 
+                  SliverChildListDelegate(
                     [
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -375,7 +386,7 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                             ),
                           ),
                           //------------------
-                          ListView(
+                          ListView.builder(
                             padding: const EdgeInsets.fromLTRB(
                               5,
                               5,
@@ -383,14 +394,16 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                               0,
                             ),
                             physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            children: [
+                            shrinkWrap: true, itemBuilder: (BuildContext context, int index) { 
+                              final name=dataOneArtist['song'][index]['name'];
+                              final image=dataOneArtist['song'][index]['image'];
+                              final artist=dataOneArtist['song'][index]['artist'];
                               ListTile(
                                 contentPadding: const EdgeInsets.only(
                                   left: 15.0,
                                 ),
                                 title: Text(
-                                  'Xin Em',
+                                  name,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                     color: Colors.white,
@@ -404,7 +417,7 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                                   );
                                 },
                                 subtitle: Text(
-                                  'Bùi Anh Tuấn ',
+                                  artist,
                                   style: const TextStyle(
                                     color: Colors.white70,
                                   ),
@@ -428,7 +441,7 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                                       ),
                                     ),
                                     imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
+                                        image,
                                     placeholder: (context, url) => Image(
                                       fit: BoxFit.cover,
                                       image: AssetImage('assets/cover.jpg'),
@@ -449,140 +462,12 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                                   ],
                                 ),
                                 onTap: () {},
-                              ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                subtitle: Text(
-                                  'Bùi Anh Tuấn ',
-                                  style: const TextStyle(
-                                    color: Colors.white70,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/cover.jpg',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage('assets/cover.jpg'),
-                                    ),
-                                  ),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    DownloadButton(
-                                      data: {},
-                                      icon: 'download',
-                                    ),
-                                    LikeButton(data: {}),
-                                    SongTileTrailingMenu(
-                                      data: {},
-                                    ),
-                                  ],
-                                ),
-                                onTap: () {},
-                              ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                subtitle: Text(
-                                  'Bùi Anh Tuấn ',
-                                  style: const TextStyle(
-                                    color: Colors.white70,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/cover.jpg',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage('assets/cover.jpg'),
-                                    ),
-                                  ),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    DownloadButton(
-                                      data: {},
-                                      icon: 'download',
-                                    ),
-                                    LikeButton(data: {}),
-                                    SongTileTrailingMenu(
-                                      data: {},
-                                    ),
-                                  ],
-                                ),
-                                onTap: () {},
-                              ),
-                            ],
-                          ),
-                        ],
+                              );
+                              
+                             },
+                            
+                          )
+                          ],
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 6),
@@ -606,13 +491,16 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                             ),
                             SizedBox(
                               height: boxSize + 15,
-                              child: ListView(
+                              child:ListView.builder(
                                 physics: const BouncingScrollPhysics(),
                                 scrollDirection: Axis.horizontal,
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 10),
-                                children: [
-                                  GestureDetector(
+                                itemBuilder: (context, index) {
+                                  final name=dataOneArtist['album'][index]['name'];
+                                  final image=dataOneArtist['album'][index]['image'];
+                                  final artist=dataOneArtist['name'];
+                                GestureDetector(
                                     child: SizedBox(
                                       width: boxSize - 30,
                                       child: HoverBox(
@@ -626,7 +514,7 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                                           ),
                                           clipBehavior: Clip.antiAlias,
                                           child: Image.network(
-                                              'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_500.jpg'),
+                                              image),
                                           // child: const Image(
                                           //   // image: AssetImage(
                                           //   //   'assets/cover.jpg',
@@ -669,7 +557,7 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                                                         MainAxisSize.min,
                                                     children: [
                                                       Text(
-                                                        'Xin em',
+                                                        name,
                                                         textAlign:
                                                             TextAlign.center,
                                                         softWrap: false,
@@ -683,7 +571,7 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                                                                 Colors.white),
                                                       ),
                                                       Text(
-                                                        'Bùi Anh Tuấn',
+                                                        artist,
                                                         textAlign:
                                                             TextAlign.center,
                                                         softWrap: false,
@@ -707,202 +595,9 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                                       Navigator.popAndPushNamed(
                                           context, '/album');
                                     },
-                                  ),
-                                  GestureDetector(
-                                    child: SizedBox(
-                                      width: boxSize - 30,
-                                      child: HoverBox(
-                                        child: Card(
-                                          elevation: 5,
-                                          color: Colors.black,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              10.0,
-                                            ),
-                                          ),
-                                          clipBehavior: Clip.antiAlias,
-                                          child: Image.network(
-                                              'https://i1.sndcdn.com/artworks-000272552840-vt8wlh-t500x500.jpg'),
-                                          // child: const Image(
-                                          //   // image: AssetImage(
-                                          //   //   'assets/cover.jpg',
-                                          //   // ),
-                                          // ),
-                                        ),
-                                        builder: (
-                                          BuildContext context,
-                                          bool isHover,
-                                          Widget? child,
-                                        ) {
-                                          return Card(
-                                            color: isHover
-                                                ? null
-                                                : Colors.transparent,
-                                            elevation: 0,
-                                            margin: EdgeInsets.zero,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                10.0,
-                                              ),
-                                            ),
-                                            clipBehavior: Clip.antiAlias,
-                                            child: Column(
-                                              children: [
-                                                SizedBox.square(
-                                                  dimension: isHover
-                                                      ? boxSize - 25
-                                                      : boxSize - 30,
-                                                  child: child,
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    horizontal: 10.0,
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Text(
-                                                        'Chia tay',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        softWrap: false,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            height: 1.3,
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                      Text(
-                                                        'Bùi Anh Tuấn',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        softWrap: false,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 11,
-                                                            color:
-                                                                Colors.white70),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    onTap: () async {
-                                      Navigator.popAndPushNamed(
-                                          context, '/album');
-                                    },
-                                  ),
-                                  GestureDetector(
-                                    child: SizedBox(
-                                      width: boxSize - 30,
-                                      child: HoverBox(
-                                        child: Card(
-                                          elevation: 5,
-                                          color: Colors.black,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              10.0,
-                                            ),
-                                          ),
-                                          clipBehavior: Clip.antiAlias,
-                                          child: Image.network(
-                                              'https://is5-ssl.mzstatic.com/image/thumb/Music128/v4/50/27/60/50276058-c602-a8d6-6276-14ac3882d64a/886447385470.jpg/1200x1200bb.jpg'),
-                                          // child: const Image(
-                                          //   // image: AssetImage(
-                                          //   //   'assets/cover.jpg',
-                                          //   // ),
-                                          // ),
-                                        ),
-                                        builder: (
-                                          BuildContext context,
-                                          bool isHover,
-                                          Widget? child,
-                                        ) {
-                                          return Card(
-                                            color: isHover
-                                                ? null
-                                                : Colors.transparent,
-                                            elevation: 0,
-                                            margin: EdgeInsets.zero,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                10.0,
-                                              ),
-                                            ),
-                                            clipBehavior: Clip.antiAlias,
-                                            child: Column(
-                                              children: [
-                                                SizedBox.square(
-                                                  dimension: isHover
-                                                      ? boxSize - 25
-                                                      : boxSize - 30,
-                                                  child: child,
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    horizontal: 10.0,
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Text(
-                                                        'Những kẻ mộng mơ',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        softWrap: false,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            height: 1.3,
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                      Text(
-                                                        'Noo Phước Thịnh',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        softWrap: false,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 11,
-                                                            color:
-                                                                Colors.white70),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    onTap: () async {
-                                      Navigator.popAndPushNamed(
-                                          context, '/album');
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )
+                                  );
+                                  
+                              },) ,)
                           ],
                         ),
                       )

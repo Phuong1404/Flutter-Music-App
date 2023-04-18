@@ -3,11 +3,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:music_app/API/UserAPI.api.dart';
 import 'package:music_app/Screens/artists/artist.screen.dart';
 import 'package:music_app/Screens/home/body_home.screen.dart';
 import 'package:music_app/Screens/library/library.screen.dart';
 import 'package:music_app/Screens/search/search.screen.dart';
 import 'package:music_app/Screens/topchart/top_chart.screen.dart';
+import 'package:music_app/Services/store_token.service.dart';
 import 'package:music_app/Widgets/custom_physics.widget.dart';
 import 'package:music_app/Widgets/gradient_container.widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -25,28 +27,33 @@ class _HomeScreenState extends State<HomeScreen> {
   final ValueNotifier<int> _selectedIndex = ValueNotifier<int>(0);
   final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController();
-  // List sectionsToShow = Hive.box('settings').get(
-  //   'sectionsToShow',
-  //   defaultValue: ['Home', 'Top Charts', 'YouTube', 'Library'],
-  // ) as List;
 
   List sectionsToShow = ['Home', 'Top Charts', 'Artists', 'Library'] as List;
-  Future<bool> handleWillPop(BuildContext context) async {
-    // final now = DateTime.now();
-    // final backButtonHasNotBeenPressedOrSnackBarHasBeenClosed =
-    //     backButtonPressTime == null ||
-    //         now.difference(backButtonPressTime!) > const Duration(seconds: 3);
+  String _name = '';
+  Future<void> GetName() async {
+    try {
+      String? userId = await StoreToken.getToken();
+      if (userId != null) {
+        final data = await UserApi().GetProfile(userId);
+        var names = data['name'].split(' ');
+        String name = names[names.length - 1];
+        setState(() {
+          _name = name;
+        });
+      }
+      else{
+        setState(() {
+        _name = "Guest";
+      });
+      }
+    } catch (e) {
+      setState(() {
+        _name = "Guest";
+      });
+    }
+  }
 
-    // if (backButtonHasNotBeenPressedOrSnackBarHasBeenClosed) {
-    //   backButtonPressTime = now;
-    //   ShowSnackBar().showSnackBar(
-    //     context,
-    //     AppLocalizations.of(context)!.exitConfirm,
-    //     duration: const Duration(seconds: 2),
-    //     noAction: true,
-    //   );
-    //   return false;
-    // }
+  Future<bool> handleWillPop(BuildContext context) async {
     return true;
   }
 
@@ -60,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    GetName();
   }
 
   @override
@@ -322,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               .end,
                                                       children: [
                                                         Text(
-                                                          'Phương',
+                                                          _name,
                                                           style:
                                                               const TextStyle(
                                                             color: Colors.white,

@@ -16,6 +16,7 @@ class BouncyPlaylistHeaderScrollView extends StatelessWidget {
   final String placeholderImage;
   final Function? onPlayTap;
   final Function? onShuffleTap;
+  final Widget? leading;
   BouncyPlaylistHeaderScrollView({
     super.key,
     required this.scrollController,
@@ -30,6 +31,7 @@ class BouncyPlaylistHeaderScrollView extends StatelessWidget {
     this.actions,
     this.onPlayTap,
     this.onShuffleTap,
+    this.leading,
   });
 
   final ValueNotifier<bool> isTransparent = ValueNotifier<bool>(true);
@@ -286,7 +288,7 @@ class BouncyPlaylistHeaderScrollView extends StatelessWidget {
               leading: IconButton(
                   splashColor: Colors.transparent,
                   icon: Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => {Navigator.pop(context, true)}
+                  onPressed: () => {Navigator.popAndPushNamed(context, '/home'),}
                   // onPressed: () => Navigator.of(context).pop(),
                   ),
               floating: true,

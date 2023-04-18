@@ -235,7 +235,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
                             }
                             else{
-                              await StoreToken.storageToken(data['data']['id']);
+                              int Id=data['data']['id'];
+                              await StoreToken.storageToken(Id.toString());
                               Navigator.popAndPushNamed(context, '/home');
                             }
                           } else {
