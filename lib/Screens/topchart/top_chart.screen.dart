@@ -206,73 +206,74 @@ class _TopPageState extends State<TopPage>
               )
             else
               Expanded(
-                  child: ListView.builder(
-                itemCount: showList.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (context, index) {
-                  String name=showList[index]['name'];
-                  int number=index+1;
-                  return ListTile(
-                    leading: Card(
-                      margin: EdgeInsets.zero,
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(7.0),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: Stack(
-                        children: [
-                          const Image(
-                            image: AssetImage('assets/cover.jpg'),
-                          ),
-                          CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl:showList[index]['image'],
-                            errorWidget: (context, _, __) => const Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage('assets/cover.jpg'),
+                  child: RefreshIndicator(
+                      color: Color.fromARGB(255, 42, 215, 94),
+                      onRefresh: () async {
+                        await Future.delayed(
+                            const Duration(milliseconds: 1200));
+                        await getCachedData(widget.type);
+                        setState(() {});
+                      },
+                      child: ListView.builder(
+                        itemCount: showList.length,
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: (context, index) {
+                          String name = showList[index]['name'];
+                          int number = index + 1;
+                          return ListTile(
+                            leading: Card(
+                              margin: EdgeInsets.zero,
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(7.0),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Stack(
+                                children: [
+                                  const Image(
+                                    image: AssetImage('assets/cover.jpg'),
+                                  ),
+                                  CachedNetworkImage(
+                                    fit: BoxFit.cover,
+                                    imageUrl: showList[index]['image'],
+                                    errorWidget: (context, _, __) =>
+                                        const Image(
+                                      fit: BoxFit.cover,
+                                      image: AssetImage('assets/cover.jpg'),
+                                    ),
+                                    placeholder: (context, url) => const Image(
+                                      fit: BoxFit.cover,
+                                      image: AssetImage('assets/cover.jpg'),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            placeholder: (context, url) => const Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage('assets/cover.jpg'),
+                            title: Text(
+                              '$number. $name',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.4),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    title: Text(
-                      '$number. $name',
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          height: 1.4),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    subtitle: Text(
-                      showList[index]['artist'],
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: SongTileTrailingMenu(
-                      data: {},
-                    ),
-                    onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => SearchPage(
-                      //       query: showList[index]['name'].toString(),
-                      //     ),
-                      //   ),
-                      // );
-                    },
-                  );
-                },
-              )),
+                            subtitle: Text(
+                              showList[index]['artist'],
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white70,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            trailing: SongTileTrailingMenu(
+                              data: {},
+                            ),
+                            onTap: () {
+                            },
+                          );
+                        },
+                      ))),
           ],
         );
       },

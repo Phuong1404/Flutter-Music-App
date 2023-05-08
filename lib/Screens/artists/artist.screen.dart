@@ -19,16 +19,18 @@ class _ArtistScreenState extends State<ArtistScreen>
     with AutomaticKeepAliveClientMixin<ArtistScreen> {
   Future<void> getDataArtist() async {
     final data = await ArtistApi().getAllArtist();
+
     if (data.isNotEmpty) {
       DataArtistlist = data;
+      Fetched=true;
     }
   }
-  
+
   @override
   Widget build(BuildContext cntxt) {
     // TODO: implement build
     super.build(context);
-    if (!Fetched){
+    if (!Fetched) {
       getDataArtist();
     }
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -99,14 +101,19 @@ class _ArtistScreenState extends State<ArtistScreen>
             body: SizedBox(
               child: Container(
                   margin: EdgeInsets.only(left: 11, right: 11, top: 10),
-                  child: GridView.builder(gridDelegate:
+                  child: GridView.builder(
+                    gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 170,
                       childAspectRatio: 2 / 2,
                       mainAxisSpacing: 9,
                       crossAxisSpacing: 0,
-                    ), itemBuilder: (BuildContext context, int index) { 
-                        GestureDetector(
+                    ),
+                    itemCount: DataArtistlist.length,
+                    itemBuilder: (BuildContext context,index) {
+                      final image=DataArtistlist[index]['avatar'];
+                      final name=DataArtistlist[index]['name'];
+                      GestureDetector(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -117,7 +124,7 @@ class _ArtistScreenState extends State<ArtistScreen>
                                 borderRadius: BorderRadius.circular(10000.0),
                                 child: CachedNetworkImage(
                                   fit: BoxFit.cover,
-                                  imageUrl:DataArtistlist[index]['avatar'],
+                                  imageUrl: image,
                                   errorWidget: (context, _, __) => const Image(
                                     fit: BoxFit.cover,
                                     image: AssetImage('assets/cover.jpg'),
@@ -130,7 +137,7 @@ class _ArtistScreenState extends State<ArtistScreen>
                               ),
                             ),
                             Text(
-                              DataArtistlist[index]['name'],
+                              name,
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -151,20 +158,22 @@ class _ArtistScreenState extends State<ArtistScreen>
                               ) =>
                                   ArtistSearchPage(
                                 data: {
-                                  "id":DataArtistlist[index]['id'],
-                                  "name":DataArtistlist[index]['name'],
-                                  "avatar":DataArtistlist[index]['avatar'],
-                                  "album_count":DataArtistlist[index]['album_count'],
-                                  "song_count":DataArtistlist[index]['song_count'],
+                                  // "id": DataArtistlist[index]['id'],
+                                  // "name": DataArtistlist[index]['name'],
+                                  // "avatar": DataArtistlist[index]['avatar'],
+                                  // "album_count": DataArtistlist[index]
+                                  //     ['album_count'],
+                                  // "song_count": DataArtistlist[index]
+                                  //     ['song_count'],
                                 },
-                                
                               ),
                             ),
                           );
+                        
                         },
                       );
-                     },
-                    )
+                    },
+                  )
                   ),
             )));
   }

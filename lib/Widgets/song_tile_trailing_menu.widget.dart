@@ -155,7 +155,7 @@ class _SongTileTrailingMenuState extends State<SongTileTrailingMenu> {
       onSelected: (value) {
         switch (value) {
           case 3:
-            Share.share(widget.data['perma_url'].toString());
+            Share.share(widget.data['file'].toString());
             break;
 
           case 4:

@@ -1,10 +1,12 @@
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app/Screens/player/audioplayer.screen.dart';
 
 class SeekBar extends StatefulWidget {
-  // final AudioPlayerHandler audioHandler;
+  final AudioPlayerHandler audioHandler;
   final Duration duration;
   final Duration position;
   final Duration bufferedPosition;
@@ -18,7 +20,7 @@ class SeekBar extends StatefulWidget {
     required this.duration,
     required this.position,
     required this.offline,
-    // required this.audioHandler,
+    required this.audioHandler,
     // required this.width,
     // required this.height,
     this.bufferedPosition = Duration.zero,
@@ -98,38 +100,6 @@ class _SeekBarState extends State<SeekBar> {
             },
           ),
         ),
-        // Positioned(
-        //   right: 25.0,
-        //   top: 10,
-        //   child: StreamBuilder<double>(
-        //     stream: widget.audioHandler.speed,
-        //     builder: (context, snapshot) {
-        //       final String speedValue =
-        //           '${snapshot.data?.toStringAsFixed(1) ?? 1.0}x';
-        //       return GestureDetector(
-        //         child: Text(
-        //           speedValue,
-        //           style: TextStyle(
-        //             fontWeight: FontWeight.w500,
-        //             color: speedValue == '1.0x'
-        //                 ? Theme.of(context).disabledColor
-        //                 : null,
-        //           ),
-        //         ),
-        //         onTap: () {
-        //           showSliderDialog(
-        //             context: context,
-        //             title: AppLocalizations.of(context)!.adjustSpeed,
-        //             divisions: 25,
-        //             min: 0.5,
-        //             max: 3.0,
-        //             audioHandler: widget.audioHandler,
-        //           );
-        //         },
-        //       );
-        //     },
-        //   ),
-        // ),
         Positioned(
             right: 25.0,
             top: 10,
@@ -148,7 +118,7 @@ class _SeekBarState extends State<SeekBar> {
                   divisions: 25,
                   min: 0.5,
                   max: 3.0,
-                  // audioHandler: widget.audioHandler,
+                  audioHandler: widget.audioHandler,
                 );
               },
             )),
@@ -209,7 +179,7 @@ void showSliderDialog({
   required int divisions,
   required double min,
   required double max,
-  // required AudioPlayerHandler audioHandler,
+  required AudioPlayerHandler audioHandler,
   String valueSuffix = '',
 }) {
   showDialog<void>(
@@ -223,7 +193,7 @@ void showSliderDialog({
           title,
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.white),
-        ),
+        ),    
         content: SizedBox(
           height: 100.0,
           child: Column(

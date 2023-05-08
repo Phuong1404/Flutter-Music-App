@@ -8,7 +8,7 @@ class MediaItemConverter {
       'album_id': mediaItem.extras?['album_id'],
       'title': mediaItem.title, //name
       'image': mediaItem.extras!['image'].toString(),
-      'url': mediaItem.extras!['url'].toString(),
+      'file': mediaItem.extras!['file'].toString(),
       "duration": mediaItem.duration?.inSeconds.toString(),
       "artist": mediaItem.artist.toString(),
       'subtitle': mediaItem.extras?['subtitle'],
@@ -26,20 +26,13 @@ class MediaItemConverter {
       album: song['album'].toString(),
       artist: song['artist'].toString(),
       duration: Duration(
-        seconds: int.parse(
-          (song['duration'] == null ||
-                  song['duration'] == 'null' ||
-                  song['duration'] == '')
-              ? '180'
-              : song['duration'].toString(),
-        ),
-      ),
-      title: song['title'].toString(),
+          milliseconds:
+              (double.parse(song['duration'].toString()) * 60000).toInt()),
+      title: song['name'].toString(),
       extras: {
-        'image':song['image'],
-        'url': song['url'],
-        'album_id': song['album_id'],
-        'subtitle': song['subtitle'],
+        'image': song['image'],
+        'file': song['file'],
+        'subtitle': song['artist'],
         'addedByAutoplay': addedByAutoplay,
         'autoplay': autoplay,
         'playlistBox': playlistBox,

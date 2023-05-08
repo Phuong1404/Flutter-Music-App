@@ -23,6 +23,7 @@ class AuthApi {
             'password': Password,
             'db': 'DB_Spotify'
           }));
+          print('00000000000');
       if (response.statusCode == 200) {
         final result = await jsonDecode(response.body);
         if (result['result']['Error'] == null) {

@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
-// /import 'package:blackhole/CustomWidgets/gradient_containers.dart';
-// import 'package:blackhole/Screens/Player/audioplayer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -31,90 +29,81 @@ class _MiniPlayerState extends State<MiniPlayer> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool rotated = MediaQuery.of(context).size.height < screenWidth;
     return Card(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 2.0,
-                        vertical: 1.0,
-                      ),
-                      elevation: 0,
-                      child: SizedBox(
-                        height: 72.0,
-                        child: GradientContainer(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ListTile(
-                                // dense: useDense,
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/player');
-                                },
-                                title: Text(
-                                  'Thương em là điều anh không thể ngờ',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                subtitle: Text(
-                                  'Noo Phước Thịnh',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: Colors.white70)
-                                ),
-                                leading: Hero(
-                                  tag: 'currentArtwork',
-                                  child: Card(
-                                    elevation: 8,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(7.0),
-                                    ),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: SizedBox.square(
-                                            dimension: 50.0,
-                                            child: CachedNetworkImage(
-                                              fit: BoxFit.cover,
-                                              errorWidget: (
-                                                BuildContext context,
-                                                _,
-                                                __,
-                                              ) =>
-                                                  const Image(
-                                                fit: BoxFit.cover,
-                                                image: AssetImage(
-                                                  'assets/cover.jpg',
-                                                ),
-                                              ),
-                                              placeholder: (
-                                                BuildContext context,
-                                                _,
-                                              ) =>
-                                                  const Image(
-                                                fit: BoxFit.cover,
-                                                image: AssetImage(
-                                                  'assets/cover.jpg',
-                                                ),
-                                              ),
-                                              imageUrl:
-                                                  'https://c-cl.cdn.smule.com/rs-s94/arr/18/66/011b2306-b067-44b7-ba7a-d7c3717fe92a.jpg',
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                                trailing: ControlButtons(
-                                  // audioHandler,
-                                  miniplayer: true,
-                                  buttons: ['Like', 'Play/Pause', 'Next'],
-                                  // buttons: mediaItem.artUri
-                                  //         .toString()
-                                  //         .startsWith('file:')
-                                  //     ? ['Like', 'Play/Pause', 'Next']
-                                  //     : preferredMiniButtons,
+      margin: const EdgeInsets.symmetric(
+        horizontal: 2.0,
+        vertical: 1.0,
+      ),
+      elevation: 0,
+      child: SizedBox(
+        height: 72.0,
+        child: GradientContainer(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                // dense: useDense,
+                onTap: () {
+                  Navigator.pushNamed(context, '/player');
+                },
+                title: Text(
+                  'Thương em là điều anh không thể ngờ',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Colors.white),
+                ),
+                subtitle: Text(
+                  'Noo Phước Thịnh',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Colors.white70)
+                ),
+                leading: Hero(
+                  tag: 'currentArtwork',
+                  child: Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7.0),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: SizedBox.square(
+                            dimension: 50.0,
+                            child: CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              errorWidget: (
+                                BuildContext context,
+                                _,
+                                __,
+                              ) =>
+                                  const Image(
+                                fit: BoxFit.cover,
+                                image: AssetImage(
+                                  'assets/cover.jpg',
                                 ),
                               ),
-                              // child!,
-                            ],
+                              placeholder: (
+                                BuildContext context,
+                                _,
+                              ) =>
+                                  const Image(
+                                fit: BoxFit.cover,
+                                image: AssetImage(
+                                  'assets/cover.jpg',
+                                ),
+                              ),
+                              imageUrl:
+                                  'https://c-cl.cdn.smule.com/rs-s94/arr/18/66/011b2306-b067-44b7-ba7a-d7c3717fe92a.jpg',
+                            ),
                           ),
-                        ),
-                      ),
-                    );
+                  ),
+                ),
+                trailing: SizedBox()
+              ),
+              // child!,
+            ],
+          ),
+        ),
+      ),
+    );
 
   }
 }

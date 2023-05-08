@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:music_app/API/AlbumAPI.api.dart';
+import 'package:music_app/Services/player_service.dart';
 import 'package:music_app/Widgets/bouncy_playlist_header_scroll_view.widget.dart';
 import 'package:music_app/Widgets/copy_clipboard.widget.dart';
 import 'package:music_app/Widgets/download_button.widget.dart';
@@ -37,7 +38,6 @@ class _SongsListScreenState extends State<SongsListScreen> {
     final albumId = widget.Id;
     final data = await AlbumAPI().getSongInAlbum(albumId);
     if (data['message'] == null) {
-      print(data);
       return data;
     }
     return {};
@@ -115,18 +115,18 @@ class _SongsListScreenState extends State<SongsListScreen> {
                       secondarySubtitle: albumData['artist'] != null
                           ? albumData['artist']
                           : 'Playlist. 25.8K Followers',
-                      // onPlayTap: () => PlayerInvoke.init(
-                      //   songsList: songList,
-                      //   index: 0,
-                      //   isOffline: false,
-                      // ),
+                      onPlayTap: () => PlayerInvoke.init(
+                        songsList: songList,
+                        index: 0,
+                        isOffline: false,
+                      ),
                       // onShuffleTap: () => PlayerInvoke.init(
                       //   songsList: songList,
                       //   index: 0,
                       //   isOffline: false,
                       //   shuffle: true,
                       // ),
-                      onPlayTap: () => {},
+                      // onPlayTap: () => {},
                       onShuffleTap: () => {},
                       placeholderImage: 'assets/album.png',
                       imageUrl: albumData['image'],

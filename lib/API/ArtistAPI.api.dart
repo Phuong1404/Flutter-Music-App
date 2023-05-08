@@ -13,6 +13,7 @@ class ArtistApi {
     final response = await get(path);
     if (response.statusCode == 200) {
       final List results = await jsonDecode(response.body) as List;
+      
       final List<Map> artistList = [];
       for (int i = 0; i < results.length; i++) {
         Map? artist_record = {
@@ -24,12 +25,13 @@ class ArtistApi {
         };
         artistList.add(artist_record);
       }
+      return artistList;
     }
     return List.empty();
   }
 
   Future<Map> getOneArtist(String Id) async {
-    final Uri path = Uri.parse('$Base_Url//spotify/artists/$Id');
+    final Uri path = Uri.parse('$Base_Url/spotify/artists/$Id');
     final response = await get(path);
     if (response.statusCode == 200) {
       final result = await jsonDecode(response.body);

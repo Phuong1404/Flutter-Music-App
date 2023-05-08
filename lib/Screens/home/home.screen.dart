@@ -266,26 +266,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                             // collapseMode: CollapseMode.parallax,
                                             background: GestureDetector(
                                               onTap: () async {
-                                                // await showTextInputDialog(
-                                                //   context: context,
-                                                //   title: 'Name',
-                                                //   initialText: name,
-                                                //   keyboardType:
-                                                //       TextInputType.name,
-                                                //   onSubmitted: (value) {
-                                                //     Hive.box('settings').put(
-                                                //       'name',
-                                                //       value.trim(),
-                                                //     );
-                                                //     name = value.trim();
-                                                //     Navigator.pop(context);
-                                                //     updateUserDetails(
-                                                //       'name',
-                                                //       value.trim(),
-                                                //     );
-                                                //   },
-                                                // );
-                                                // setState(() {});
                                               },
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
@@ -492,15 +472,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             pageController: _pageController,
                           ),
                           LibraryScreen()
-                          // if (sectionsToShow.contains('Top Charts'))
-
-                          //   TopChartScreen(
-                          //     pageController: _pageController,
-                          //   ),
-                          // const YouTube(),
-                          // const LibraryPage(),
-                          // if (sectionsToShow.contains('Settings'))
-                          //   SettingPage(callback: callback),
                         ],
                       ),
                     ),
