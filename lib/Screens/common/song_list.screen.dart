@@ -13,14 +13,12 @@ import 'package:music_app/Widgets/playlist_popupmenu.widget.dart';
 import 'package:music_app/Widgets/song_tile_trailing_menu.widget.dart';
 import 'package:share_plus/share_plus.dart';
 
-
-
 class SongsListScreen extends StatefulWidget {
-  // final Map listItem;
-  final String Id;
-  const SongsListScreen({super.key, required this.Id
-      // required this.listItem,
-      });
+  final Map listItem;
+  const SongsListScreen({
+    super.key,
+    required this.listItem,
+  });
 
   @override
   _SongsListScreenState createState() => _SongsListScreenState();
@@ -34,35 +32,25 @@ class _SongsListScreenState extends State<SongsListScreen> {
   bool fetched = false;
   final ScrollController _scrollController = ScrollController();
 
-  Future<Map> getSongFromAPI() async {
-    final albumId = widget.Id;
-    final data = await AlbumAPI().getSongInAlbum(albumId);
-    if (data['message'] == null) {
-      return data;
-    }
-    return {};
-  }
-
-  Future<void> _fetchSongs() async {
+  void _fetchSongs() {
     loading = true;
-    albumData = await getSongFromAPI();
-    songList = albumData['song'];
-    setState(() {});
+    try {
+      albumData = widget.listItem;
+      songList = albumData['song_list'];
+      setState(() {});
+    } catch (e) {
+      setState(() {
+        fetched = true;
+        loading = false;
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
+
     _fetchSongs();
-    // _scrollController.addListener(() {
-    //   if (_scrollController.position.pixels >=
-    //           _scrollController.position.maxScrollExtent &&
-    //       widget.listItem['type'].toString() == 'songs' &&
-    //       !loading) {
-    //     page += 1;
-    //     _fetchSongs();
-    //   }
-    // });
   }
 
   @override
@@ -87,7 +75,6 @@ class _SongsListScreenState extends State<SongsListScreen> {
                     )
                   : BouncyPlaylistHeaderScrollView(
                       scrollController: _scrollController,
-
                       actions: [
                         DownloadButton(
                           data: {},
@@ -120,14 +107,12 @@ class _SongsListScreenState extends State<SongsListScreen> {
                         index: 0,
                         isOffline: false,
                       ),
-                      // onShuffleTap: () => PlayerInvoke.init(
-                      //   songsList: songList,
-                      //   index: 0,
-                      //   isOffline: false,
-                      //   shuffle: true,
-                      // ),
-                      // onPlayTap: () => {},
-                      onShuffleTap: () => {},
+                      onShuffleTap: () => PlayerInvoke.init(
+                        songsList: songList,
+                        index: 0,
+                        isOffline: false,
+                        shuffle: true,
+                      ),
                       placeholderImage: 'assets/album.png',
                       imageUrl: albumData['image'],
                       sliverList: SliverList(
@@ -185,7 +170,7 @@ class _SongsListScreenState extends State<SongsListScreen> {
                                       'assets/cover.jpg',
                                     ),
                                   ),
-                                  imageUrl:entry['image'],
+                                  imageUrl: entry['image'],
                                   // '${entry["image"].replaceAll('http:', 'https:')}',
                                   placeholder: (context, url) => const Image(
                                     fit: BoxFit.cover,
@@ -213,15 +198,15 @@ class _SongsListScreenState extends State<SongsListScreen> {
                                   )
                                 ],
                               ),
-                              // onTap: () {
-                              //   PlayerInvoke.init(
-                              //     songsList: songList,
-                              //     index: songList.indexWhere(
-                              //       (element) => element == entry,
-                              //     ),
-                              //     isOffline: false,
-                              //   );
-                              // },
+                              onTap: () {
+                                PlayerInvoke.init(
+                                  songsList: songList,
+                                  index: songList.indexWhere(
+                                    (element) => element == entry,
+                                  ),
+                                  isOffline: false,
+                                );
+                              },
                             );
                           })
                         ]),

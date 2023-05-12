@@ -16,16 +16,6 @@ import 'package:path_provider/path_provider.dart';
 import 'Services/audio_service.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
-  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //   print('Got a message whilst in the foreground!=======================');
-  //   print('Message data: ${message} ==============================');
-
-  //   if (message.notification != null) {
-  //     print('Message also contained a notification: ${message.notification?.title} =======================');
-  //   }
-  // });
   WidgetsFlutterBinding.ensureInitialized();
   Paint.enableDithering = true;
 
@@ -35,18 +25,11 @@ void main() async {
     await Hive.initFlutter();
   }
   await openHiveBox('settings');
-  ;
+  
   await openHiveBox('cache', limit: true);
-  // if (Platform.isAndroid) {
-  //   setOptimalDisplayMode();
-  // }
   await startService();
   runApp(const MyApp());
 }
-
-// Future<void> setOptimalDisplayMode() async {
-//   await FlutterDisplayMode.setHighRefreshRate();
-// }
 
 Future<void> startService() async {
   final AudioPlayerHandler audioHandler = await AudioService.init(
@@ -54,7 +37,6 @@ Future<void> startService() async {
     config: AudioServiceConfig(
       androidNotificationChannelId: 'com.example.music_app.channel.audio',
       androidNotificationChannelName: 'Spotyfy',
-      // androidNotificationIcon: null,
       androidShowNotificationBadge: true,
       androidStopForegroundOnPause: false,
       notificationColor: Colors.grey[900],
@@ -85,13 +67,6 @@ Future<void> openHiveBox(String boxName, {bool limit = false}) async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  // void get_token()async{
-  //   final fcmToken = await FirebaseMessaging.instance.getToken();
-  //   // print('--------------------------------');
-  //   // print(fcmToken);
-  //   // print('--------------------------------');
-  // }
-
   @override
   Widget build(BuildContext context) {
     // get_token();
@@ -124,7 +99,6 @@ class MyApp extends StatelessWidget {
             pageBuilder: (_, __, ___) => const PlayScreen(),
           );
         }
-        // return HandleRoute.handleRoute(settings.name);
       },
     );
   }

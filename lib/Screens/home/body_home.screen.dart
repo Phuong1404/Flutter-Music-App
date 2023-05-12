@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:music_app/API/AlbumAPI.api.dart';
 import 'package:music_app/API/SongAPI.api.dart';
 import 'package:music_app/Screens/common/song_list.screen.dart';
+import 'package:music_app/Services/player_service.dart';
 import 'package:music_app/Services/store_token.service.dart';
 import 'package:music_app/Widgets/horizontal_albumlist_separated.widget.dart';
 import 'package:music_app/Widgets/on_hover.widget.dart';
@@ -13,10 +15,10 @@ class HomeBodyScreen extends StatefulWidget {
 
 class _HomeBodyScreenState extends State<HomeBodyScreen> {
   bool fetched = false;
-  Map dataTrendingAlbum = {};
-  Map dataPopulateAlbum = {};
-  Map dataByUserAlbum = {};
-  List dataHistorySong = [];
+  Map dataTrendingAlbum = Hive.box('cache').get('TrendingAlbum', defaultValue: {}) as Map;
+  Map dataPopulateAlbum = Hive.box('cache').get('PopulateAlbum', defaultValue: {}) as Map;
+  Map dataByUserAlbum = Hive.box('cache').get('UserAlbum', defaultValue: {}) as Map;
+  List dataHistorySong = Hive.box('cache').get('HistorySong', defaultValue: []) as List;
 
   Future<Map> getDataTrending() async {
     final data = await AlbumAPI().getTrendingAlbum();
@@ -53,10 +55,14 @@ class _HomeBodyScreenState extends State<HomeBodyScreen> {
 
   Future<void> getDataHome() async {
     dataTrendingAlbum = await getDataTrending();
+    Hive.box('cache').put('TrendingAlbum', dataTrendingAlbum);
     dataPopulateAlbum = await getDataPopulate();
+    Hive.box('cache').put('PopulateAlbum', dataPopulateAlbum);
     dataByUserAlbum = await getDataByUser();
+    Hive.box('cache').put('UserAlbum', dataByUserAlbum);
     dataHistorySong = await getDataHistory();
-    setState(() {});
+    Hive.box('cache').put('HistorySong', dataHistorySong);
+    // setState(() {});
   }
 
   @override
@@ -82,8 +88,7 @@ class _HomeBodyScreenState extends State<HomeBodyScreen> {
       onRefresh: () async {
         await Future.delayed(const Duration(milliseconds: 1200));
         await getDataHome();
-        setState(() {
-        });
+        setState(() {});
       },
       child: ListView(
         physics: const BouncingScrollPhysics(),
@@ -107,7 +112,17 @@ class _HomeBodyScreenState extends State<HomeBodyScreen> {
                     ),
                   ],
                 ),
-                HorizontalAlbumsListSeparated(songsList: dataHistorySong),
+                HorizontalAlbumsListSeparated(
+                  songsList: dataHistorySong,
+                  onTap: (int idx) {
+                    PlayerInvoke.init(
+                      songsList: dataHistorySong,
+                      index: idx,
+                      isOffline: false,
+                    );
+                    Navigator.pushNamed(context, '/player');
+                  },
+                ),
               ],
             ),
           dataByUserAlbum['length'] != null
@@ -234,8 +249,8 @@ class _HomeBodyScreenState extends State<HomeBodyScreen> {
                                         ___,
                                       ) =>
                                           SongsListScreen(
-                                              Id: album[index]['id']
-                                                  .toString())),
+                                            listItem: album[index],
+                                          )),
                                 );
                               },
                             );
@@ -368,8 +383,8 @@ class _HomeBodyScreenState extends State<HomeBodyScreen> {
                                         ___,
                                       ) =>
                                           SongsListScreen(
-                                              Id: album[index]['id']
-                                                  .toString())),
+                                            listItem: album[index],
+                                          )),
                                 );
                               },
                             );
@@ -502,8 +517,8 @@ class _HomeBodyScreenState extends State<HomeBodyScreen> {
                                         ___,
                                       ) =>
                                           SongsListScreen(
-                                              Id: album[index]['id']
-                                                  .toString())),
+                                            listItem: album[index],
+                                          )),
                                 );
                               },
                             );

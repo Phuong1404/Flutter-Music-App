@@ -66,7 +66,6 @@ class _PlayScreenState extends State<PlayScreen> {
           stream: audioHandler.mediaItem,
           builder: (context, snapshot) {
             final MediaItem? mediaItem = snapshot.data;
-            print(mediaItem);
             if (mediaItem == null) return const SizedBox();
             return SafeArea(
               child: Scaffold(

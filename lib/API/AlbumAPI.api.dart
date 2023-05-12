@@ -16,6 +16,22 @@ class AlbumAPI {
       final List results = json.decode(response.body) as List;
       final List<Map> albumList = [];
       for (int i = 0; i < results.length; i++) {
+        final List<Map> songList = [];
+        for (int j = 0; j < results[i]['song_list'].length; j++) {
+          songList.add({
+            "id": results[i]['song_list'][j]['id'],
+            "name": results[i]['song_list'][j]['name'],
+            "image": results[i]['song_list'][j]['image'],
+            "release_date": results[i]['song_list'][j]['release_date'],
+            "topic": results[i]['song_list'][j]['topic'],
+            "album_id": results[i]['song_list'][j]['album_id'],
+            "file": results[i]['song_list'][j]['file'],
+            "duration": results[i]['song_list'][j]['duration'],
+            "listenCount": results[i]['song_list'][j]['listenCount'],
+            "artist": results[i]['song_list'][j]['artist'],
+            "likeCount": results[i]['song_list'][j]['likeCount']
+          });
+        }
         Map? album_record = {
           "id": results[i]['id'],
           "name": results[i]['name'],
@@ -24,6 +40,7 @@ class AlbumAPI {
           "topic": results[i]['topic'],
           "artist": results[i]['artist'],
           "song_count": results[i]['song_count'],
+          "song_list": songList
         };
         albumList.add(album_record);
       }
@@ -39,6 +56,22 @@ class AlbumAPI {
       final List results = json.decode(response.body) as List;
       final List<Map> albumList = [];
       for (int i = 0; i < results.length; i++) {
+        final List<Map> songList = [];
+        for (int j = 0; j < results[i]['song_list'].length; j++) {
+          songList.add({
+            "id": results[i]['song_list'][j]['id'],
+            "name": results[i]['song_list'][j]['name'],
+            "image": results[i]['song_list'][j]['image'],
+            "release_date": results[i]['song_list'][j]['release_date'],
+            "topic": results[i]['song_list'][j]['topic'],
+            "album_id": results[i]['song_list'][j]['album_id'],
+            "file": results[i]['song_list'][j]['file'],
+            "duration": results[i]['song_list'][j]['duration'],
+            "listenCount": results[i]['song_list'][j]['listenCount'],
+            "artist": results[i]['song_list'][j]['artist'],
+            "likeCount": results[i]['song_list'][j]['likeCount']
+          });
+        }
         Map? album_record = {
           "id": results[i]['id'],
           "name": results[i]['name'],
@@ -47,6 +80,7 @@ class AlbumAPI {
           "topic": results[i]['topic'],
           "artist": results[i]['artist'],
           "song_count": results[i]['song_count'],
+          "song_list": songList
         };
         albumList.add(album_record);
       }
@@ -62,6 +96,22 @@ class AlbumAPI {
       final List results = json.decode(response.body) as List;
       final List<Map> albumList = [];
       for (int i = 0; i < results.length; i++) {
+        final List<Map> songList = [];
+        for (int j = 0; j < results[i]['song_list'].length; j++) {
+          songList.add({
+            "id": results[i]['song_list'][j]['id'],
+            "name": results[i]['song_list'][j]['name'],
+            "image": results[i]['song_list'][j]['image'],
+            "release_date": results[i]['song_list'][j]['release_date'],
+            "topic": results[i]['song_list'][j]['topic'],
+            "album_id": results[i]['song_list'][j]['album_id'],
+            "file": results[i]['song_list'][j]['file'],
+            "duration": results[i]['song_list'][j]['duration'],
+            "listenCount": results[i]['song_list'][j]['listenCount'],
+            "artist": results[i]['song_list'][j]['artist'],
+            "likeCount": results[i]['song_list'][j]['likeCount']
+          });
+        }
         Map? album_record = {
           "id": results[i]['id'],
           "name": results[i]['name'],
@@ -70,6 +120,7 @@ class AlbumAPI {
           "topic": results[i]['topic'],
           "artist": results[i]['artist'],
           "song_count": results[i]['song_count'],
+          "song_list": songList
         };
         albumList.add(album_record);
       }

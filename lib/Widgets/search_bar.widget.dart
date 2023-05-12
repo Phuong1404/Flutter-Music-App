@@ -88,7 +88,7 @@ class _SearchBarState extends State<SearchBar> {
         ],
       ),
       child: TextField(
-        //controller: controller,
+        controller: widget.controller,
         textAlignVertical: TextAlignVertical.center,
         textCapitalization: TextCapitalization.sentences,
         style: TextStyle(color: Colors.white),
@@ -115,14 +115,18 @@ class _SearchBarState extends State<SearchBar> {
                   Icons.close_rounded,
                   color: Colors.white,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  widget.controller.text = '';
+                  suggestionsList.value = [];
+                  if (widget.onQueryCleared != null) {
+                    widget.onQueryCleared!.call();
+                  }
+                },
               ),
             ),
           ),
           border: InputBorder.none,
           hintText: widget.hintText,
-          // AppLocalizations.of(context)!
-          //     .enterName,
           hintStyle: const TextStyle(
             color: Colors.white70,
           ),
@@ -130,8 +134,39 @@ class _SearchBarState extends State<SearchBar> {
         autofocus: widget.autofocus,
         keyboardType: TextInputType.text,
         textInputAction: TextInputAction.search,
-        onChanged: (val) {},
-        onSubmitted: (submittedQuery) {},
+        onChanged: (val) {
+          Future.delayed(
+            const Duration(
+              milliseconds: 600,
+            ),
+            () async {
+              if (tempQuery == val &&
+                  tempQuery.trim() != '' &&
+                  tempQuery != query) {
+                query = tempQuery;
+                if (widget.onQueryChanged == null) {
+                  widget.onSubmitted(tempQuery);
+                } else {
+                  widget.onQueryChanged!(tempQuery);
+                }
+              }
+            },
+          );
+        },
+        onSubmitted: (submittedQuery) {
+          if (submittedQuery.trim() != '') {
+            query = submittedQuery;
+            widget.onSubmitted(submittedQuery);
+            if (!hide.value) hide.value = true;
+            List searchQueries = Hive.box('settings')
+                .get('search', defaultValue: []) as List;
+            searchQueries.insert(0, query);
+            if (searchQueries.length > 10) {
+              searchQueries = searchQueries.sublist(0, 10);
+            }
+            Hive.box('settings').put('search', searchQueries);
+          }
+        },
       ),
     )
         ],

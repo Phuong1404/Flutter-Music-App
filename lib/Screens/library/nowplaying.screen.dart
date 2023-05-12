@@ -16,22 +16,10 @@ class NowPlaying extends StatefulWidget {
 }
 
 class _NowPlayingState extends State<NowPlaying> {
-  // final AudioPlayerHandler audioHandler = GetIt.I<AudioPlayerHandler>();
+  final AudioPlayerHandler audioHandler = GetIt.I<AudioPlayerHandler>();
   final ScrollController _scrollController = ScrollController();
   Map dataPlaying = {};
-  String image_url="";
   bool fetch = false;
-  Future<void> getDataPlaying() async {
-    String? userId = await StoreToken.getToken();
-    if (userId != null) {
-      dataPlaying = await SongApi().getPlayingSong(userId);
-      image_url=dataPlaying['now_play']['image'];
-      setState(() {});
-    } else {
-      dataPlaying = {};
-    }
-    fetch = true;
-  }
 
   @override
   void dispose() {
@@ -41,41 +29,62 @@ class _NowPlayingState extends State<NowPlaying> {
 
   @override
   Widget build(BuildContext context) {
-    if (!fetch) {
-      getDataPlaying();
-    }
     return GradientContainer(
       child: Column(
         children: [
           Expanded(
-              child: Scaffold(
-                  backgroundColor: Colors.transparent,
-                  body: dataPlaying == {}
-                      ? emptyScreen(
-                          context,
-                          3,
-                          'Nothing is ',
-                          18.0,
-                          'PLAYING',
-                          60,
-                          'Go and Play Something',
-                          23.0,
-                        )
-                      : BouncyImageSliverScrollView(
-                          scrollController: _scrollController,
-                          title: 'Now Playing',
-                          localImage: false,
-                          imageUrl: image_url,
-                          sliverList: SliverList(
-                            delegate: SliverChildListDelegate(
-                              [
-                                // NowPlayingStream(
-                                //   dataPlaying: dataPlaying,
-                                // )
-                              ],
+              child: StreamBuilder<PlaybackState>(
+                  stream: audioHandler.playbackState,
+                  builder: (context, snapshot) {
+                    final playbackState = snapshot.data;
+                    final processingState = playbackState?.processingState;
+                    return Scaffold(
+                      backgroundColor: Colors.transparent,
+                      appBar: processingState != AudioProcessingState.idle
+                          ? null
+                          : AppBar(
+                              title: Text('Now Playing'),
+                              centerTitle: true,
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
                             ),
-                          ),
-                        ))),
+                      body: processingState == AudioProcessingState.idle
+                          ? emptyScreen(
+                              context,
+                              3,
+                              'Nothing is ',
+                              18.0,
+                              'PLAYING',
+                              60,
+                              'Go and Play Something',
+                              23.0,
+                            )
+                          : StreamBuilder<MediaItem?>(
+                              stream: audioHandler.mediaItem,
+                              builder: (context, snapshot) {
+                                final mediaItem = snapshot.data;
+                                return mediaItem == null
+                                    ? const SizedBox()
+                                    : BouncyImageSliverScrollView(
+                                        scrollController: _scrollController,
+                                        title: 'Now Playing',
+                                        localImage: false,
+                                        imageUrl: mediaItem.extras!['image']
+                                            .toString(),
+                                        sliverList: SliverList(
+                                          delegate: SliverChildListDelegate(
+                                            [
+                                              NowPlayingStream(
+                                                audioHandler: audioHandler,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                              },
+                            ),
+                    );
+                  })),
           MiniPlayer(),
         ],
       ),

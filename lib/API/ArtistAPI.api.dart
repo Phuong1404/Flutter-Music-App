@@ -13,7 +13,6 @@ class ArtistApi {
     final response = await get(path);
     if (response.statusCode == 200) {
       final List results = await jsonDecode(response.body) as List;
-      
       final List<Map> artistList = [];
       for (int i = 0; i < results.length; i++) {
         Map? artist_record = {

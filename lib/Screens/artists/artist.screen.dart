@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:music_app/API/ArtistAPI.api.dart';
 import 'package:music_app/Screens/search/artists.dart';
 import 'package:music_app/Screens/search/search.screen.dart';
 
-List DataArtistlist = [];
+List DataArtistlist = Hive.box('cache').get('ArtistData', defaultValue: []) as List;
 bool Fetched = false;
 
 class ArtistScreen extends StatefulWidget {
@@ -19,9 +20,9 @@ class _ArtistScreenState extends State<ArtistScreen>
     with AutomaticKeepAliveClientMixin<ArtistScreen> {
   Future<void> getDataArtist() async {
     final data = await ArtistApi().getAllArtist();
-
     if (data.isNotEmpty) {
       DataArtistlist = data;
+      Hive.box('cache').put('ArtistData', DataArtistlist);
       Fetched=true;
     }
   }
@@ -110,10 +111,10 @@ class _ArtistScreenState extends State<ArtistScreen>
                       crossAxisSpacing: 0,
                     ),
                     itemCount: DataArtistlist.length,
-                    itemBuilder: (BuildContext context,index) {
+                    itemBuilder: (context,index) {
                       final image=DataArtistlist[index]['avatar'];
                       final name=DataArtistlist[index]['name'];
-                      GestureDetector(
+                      return GestureDetector(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -158,13 +159,13 @@ class _ArtistScreenState extends State<ArtistScreen>
                               ) =>
                                   ArtistSearchPage(
                                 data: {
-                                  // "id": DataArtistlist[index]['id'],
-                                  // "name": DataArtistlist[index]['name'],
-                                  // "avatar": DataArtistlist[index]['avatar'],
-                                  // "album_count": DataArtistlist[index]
-                                  //     ['album_count'],
-                                  // "song_count": DataArtistlist[index]
-                                  //     ['song_count'],
+                                  "id": DataArtistlist[index]['id'].toString(),
+                                  "name": DataArtistlist[index]['name'],
+                                  "avatar": DataArtistlist[index]['avatar'],
+                                  "album_count": DataArtistlist[index]
+                                      ['album_count'],
+                                  "song_count": DataArtistlist[index]
+                                      ['song_count'],
                                 },
                               ),
                             ),

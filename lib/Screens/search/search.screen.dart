@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:music_app/API/SearchAPI.api.dart';
 import 'package:music_app/Screens/common/song_list.screen.dart';
 import 'package:music_app/Screens/search/albums.dart';
 import 'package:music_app/Screens/search/artists.dart';
+import 'package:music_app/Services/player_service.dart';
 import 'package:music_app/Widgets/copy_clipboard.widget.dart';
 import 'package:music_app/Widgets/download_button.widget.dart';
 import 'package:music_app/Widgets/empty_screen.widget.dart';
@@ -41,8 +44,12 @@ class _SearchPageState extends State<SearchPage> {
   bool alertShown = false;
   bool albumFetched = false;
   bool? fromHome;
-  List search = [];
-  bool showHistory = true;
+  List search = Hive.box('settings').get(
+    'search',
+    defaultValue: [],
+  ) as List;
+  bool showHistory =
+      Hive.box('settings').get('showHistory', defaultValue: true) as bool;
   bool liveSearch = true;
 
   final controller = TextEditingController();
@@ -72,8 +79,36 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  Future<void> fetchResults() async {
+    // this fetches top 5 songs results
+    final Map result =
+        await SearchAPI().getSongSearch(query == '' ? widget.query : query);
+    final List songResults = result['songs'] as List;
+    if (songResults.isNotEmpty) {
+      searchedData['Songs'] = songResults;
+    } else {
+      searchedData['Songs'] = [];
+    }
+
+    fetched = true;
+    // this fetches albums, playlists, artists, etc
+    final List<Map> value =
+        await SearchAPI().getAllSearch(query == '' ? widget.query : query);
+
+    searchedData.addEntries(value[0].entries);
+    albumFetched = true;
+    setState(
+      () {},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    fromHome ??= widget.fromHome;
+    if (!status) {
+      status = true;
+      fetchResults();
+    }
     return GradientContainer(
       child: SafeArea(
         child: Column(
@@ -94,1224 +129,663 @@ class _SearchPageState extends State<SearchPage> {
                     onPressed: () => Navigator.pop(context),
                   ),
 //-------------------------------------------------------------------------------------------------------------
-                  // body: SingleChildScrollView(
-                  //         padding: const EdgeInsets.symmetric(
-                  //           horizontal: 15,
-                  //         ),
-                  //         physics: const BouncingScrollPhysics(),
-                  //         child: Column(
-                  //           children: [
-                  //             const SizedBox(
-                  //               height: 76,
-                  //             ),
-                  //             Align(
-                  //               alignment: Alignment.topLeft,
-                  //               child: Wrap(
-                  //                 children: [
-                  //                   Padding(
-                  //                       padding: const EdgeInsets.symmetric(
-                  //                         horizontal: 5.0,
-                  //                       ),
-                  //                       child: GestureDetector(
-                  //                         child: Chip(
-                  //                           elevation:0,
-                  //                           shape: StadiumBorder(side: BorderSide(color:Color.fromARGB(255, 77, 77, 77) )),
-                  //                           backgroundColor:Color.fromARGB(255, 77, 77, 77),
-                  //                           label: Text(
-                  //                             'Text',
-                  //                           ),
-                  //                           labelStyle: TextStyle(
-                  //                             color: Colors.white,
-                  //                             fontWeight: FontWeight.normal,
-                  //                           ),
-                  //                           deleteIconColor:Colors.white,
-                  //                           onDeleted: () {
-                  //                           },
-                  //                         ),
-                  //                         onTap: () {
-
-                  //                         },
-                  //                       ),
-                  //                     ),
-                  //                     Padding(
-                  //                       padding: const EdgeInsets.symmetric(
-                  //                         horizontal: 5.0,
-                  //                       ),
-                  //                       child: GestureDetector(
-                  //                         child: Chip(
-                  //                           elevation:0,
-                  //                           shape: StadiumBorder(side: BorderSide(color:Color.fromARGB(255, 77, 77, 77) )),
-                  //                           backgroundColor:Color.fromARGB(255, 77, 77, 77),
-                  //                           label: Text(
-                  //                             'Text',
-                  //                           ),
-                  //                           labelStyle: TextStyle(
-                  //                             color: Colors.white,
-                  //                             fontWeight: FontWeight.normal,
-                  //                           ),
-                  //                           deleteIconColor:Colors.white,
-                  //                           onDeleted: () {
-                  //                           },
-                  //                         ),
-                  //                         onTap: () {
-
-                  //                         },
-                  //                       ),
-                  //                     ),
-                  //                     Padding(
-                  //                       padding: const EdgeInsets.symmetric(
-                  //                         horizontal: 5.0,
-                  //                       ),
-                  //                       child: GestureDetector(
-                  //                         child: Chip(
-                  //                           elevation:0,
-                  //                           shape: StadiumBorder(side: BorderSide(color:Color.fromARGB(255, 77, 77, 77) )),
-                  //                           backgroundColor:Color.fromARGB(255, 77, 77, 77),
-                  //                           label: Text(
-                  //                             'Text',
-                  //                           ),
-                  //                           labelStyle: TextStyle(
-                  //                             color: Colors.white,
-                  //                             fontWeight: FontWeight.normal,
-                  //                           ),
-                  //                           deleteIconColor:Colors.white,
-                  //                           onDeleted: () {
-                  //                           },
-                  //                         ),
-                  //                         onTap: () {
-
-                  //                         },
-                  //                       ),
-                  //                     ),
-                  //                     Padding(
-                  //                       padding: const EdgeInsets.symmetric(
-                  //                         horizontal: 5.0,
-                  //                       ),
-                  //                       child: GestureDetector(
-                  //                         child: Chip(
-                  //                           elevation:0,
-                  //                           shape: StadiumBorder(side: BorderSide(color:Color.fromARGB(255, 77, 77, 77) )),
-                  //                           backgroundColor:Color.fromARGB(255, 77, 77, 77),
-                  //                           label: Text(
-                  //                             'Text',
-                  //                           ),
-                  //                           labelStyle: TextStyle(
-                  //                             color: Colors.white,
-                  //                             fontWeight: FontWeight.normal,
-                  //                           ),
-                  //                           deleteIconColor:Colors.white,
-                  //                           onDeleted: () {
-                  //                           },
-                  //                         ),
-                  //                         onTap: () {
-
-                  //                         },
-                  //                       ),
-                  //                     ),
-                  //                     Padding(
-                  //                       padding: const EdgeInsets.symmetric(
-                  //                         horizontal: 5.0,
-                  //                       ),
-                  //                       child: GestureDetector(
-                  //                         child: Chip(
-                  //                           elevation:0,
-                  //                           shape: StadiumBorder(side: BorderSide(color:Color.fromARGB(255, 77, 77, 77) )),
-                  //                           backgroundColor:Color.fromARGB(255, 77, 77, 77),
-                  //                           label: Text(
-                  //                             'Text',
-                  //                           ),
-                  //                           labelStyle: TextStyle(
-                  //                             color: Colors.white,
-                  //                             fontWeight: FontWeight.normal,
-                  //                           ),
-                  //                           deleteIconColor:Colors.white,
-                  //                           onDeleted: () {
-                  //                           },
-                  //                         ),
-                  //                         onTap: () {
-
-                  //                         },
-                  //                       ),
-                  //                     ),
-
-                  //                 ]
-                  //               ),
-                  //             ),
-                  //             Column(
-                  //                   children: [
-                  //                     Padding(
-                  //                       padding: const EdgeInsets.symmetric(
-                  //                         horizontal: 10,
-                  //                         vertical: 10,
-                  //                       ),
-                  //                       child: Row(
-                  //                         children: [
-                  //                           Text(
-                  //                             'Trending Search',
-                  //                             style: TextStyle(
-                  //                               color: Color.fromARGB(255, 4, 192, 60),
-                  //                               fontSize: 20,
-                  //                               fontWeight: FontWeight.w800,
-                  //                             ),
-                  //                           ),
-                  //                         ],
-                  //                       ),
-                  //                     ),
-                  //                     Align(
-                  //                       alignment: Alignment.topLeft,
-                  //                       child: Wrap(
-                  //                         children: [
-                  //                           Padding(
-                  //                               padding:
-                  //                                   const EdgeInsets.symmetric(
-                  //                                 horizontal: 5.0,
-                  //                               ),
-                  //                               child: ChoiceChip(
-                  //                                 elevation:0,
-                  //                                 backgroundColor:Color.fromARGB(255, 77, 77, 77),
-                  //                                 label: Text('2322332323'),
-                  //                                 labelStyle: TextStyle(
-                  //                                   color: Colors.white,
-                  //                                   fontWeight:
-                  //                                       FontWeight.normal,
-                  //                                 ),
-                  //                                 shape: StadiumBorder(side: BorderSide(color:Color.fromARGB(255, 77, 77, 77) )),
-                  //                                 selected: false,
-                  //                                 onSelected: (bool selected) {
-                  //                                 },
-                  //                               ),
-                  //                             ),
-
-                  //                         ]
-                  //                       ),
-                  //                     ),
-                  //                   ],
-                  //                 )
-
-                  //           ],
-                  //         ),
-                  //       ),
-//--------------------------------Khong ton tai----------------------------------------
-                  // body:nothingFound(context) ,
-//------------------------------------Load lai----------------------------------------
-                  // body:const Center(child: CircularProgressIndicator(),),
-//--------------------------------Co data--------------------------------------s
-                  body: SingleChildScrollView(
-                    padding: const EdgeInsets.only(
-                      top: 70,
-                    ),
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(children: [
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 25, top: 10, bottom: 7),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Artists',
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 4, 192, 60),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    25,
-                                    0,
-                                    25,
-                                    0,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      GestureDetector(
+                  body: (fromHome!)
+                      ? SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                          ),
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 76,
+                              ),
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Wrap(
+                                  children: List<Widget>.generate(search.length,
+                                      (int index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 5.0,
+                                      ),
+                                      child: GestureDetector(
+                                        child: Chip(
+                                          elevation: 0,
+                                          shape: StadiumBorder(
+                                              side: BorderSide(
+                                                  color: Color.fromARGB(
+                                                      255, 77, 77, 77))),
+                                          backgroundColor:
+                                              Color.fromARGB(255, 77, 77, 77),
+                                          label: Text(
+                                            search[index].toString(),
+                                          ),
+                                          labelStyle: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                          deleteIconColor: Colors.white,
+                                          onDeleted: () {
+                                            setState(() {
+                                              search.removeAt(index);
+                                              Hive.box('settings').put(
+                                                'search',
+                                                search,
+                                              );
+                                            });
+                                          },
+                                        ),
                                         onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            PageRouteBuilder(
-                                              opaque: false,
-                                              pageBuilder: (
-                                                _,
-                                                __,
-                                                ___,
-                                              ) =>
-                                                  AlbumSearchPage(
-                                                query: query == ''
-                                                    ? widget.query
-                                                    : query,
-                                                type: 'Artists',
-                                              ),
-                                            ),
+                                          setState(
+                                            () {
+                                              fetched = false;
+                                              query = search[index]
+                                                  .toString()
+                                                  .trim();
+                                              controller.text = query;
+                                              status = false;
+                                              fromHome = false;
+                                              searchedData = {};
+                                            },
                                           );
                                         },
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              'View All',
-                                              style: TextStyle(
-                                                color: Colors.white70,
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                            ),
-                                            Icon(
-                                              Icons.chevron_right_rounded,
-                                              color: Colors.white70,
-                                            ),
-                                          ],
-                                        ),
                                       ),
-                                    ],
-                                  ),
+                                    );
+                                  }),
                                 ),
-                              ],
-                            ),
-                          ),
-                          ListView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.only(
-                              left: 5,
-                              right: 10,
-                            ),
-                            children: [
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Bùi Anh Tuấn',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  '5 Songs',
-                                  style: TextStyle(color: Colors.white70),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                isThreeLine: false,
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      50.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                trailing: null,
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    PageRouteBuilder(
-                                      opaque: false,
-                                      pageBuilder: (
-                                        _,
-                                        __,
-                                        ___,
-                                      ) =>
-                                          ArtistSearchPage(
-                                        data: {},
-                                      ),
-                                    ),
-                                  );
-                                },
                               ),
                             ],
-                          )
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 25, top: 10, bottom: 7),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Albums',
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 4, 192, 60),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    25,
-                                    0,
-                                    25,
-                                    0,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            PageRouteBuilder(
-                                              opaque: false,
-                                              pageBuilder: (
-                                                _,
-                                                __,
-                                                ___,
-                                              ) =>
-                                                  AlbumSearchPage(
-                                                query: query == ''
-                                                    ? widget.query
-                                                    : query,
-                                                type: 'Albums',
-                                              ),
-                                            ),
-                                          );
-                                          // Navigator.push(
-                                          //   context,
-                                          //   PageRouteBuilder(
-                                          //     opaque: false,
-                                          //     pageBuilder: (
-                                          //       _,
-                                          //       __,
-                                          //       ___,
-                                          //     ) =>
-                                          //         SongsListScreen(
-                                          //       listItem: {
-                                          //         'id': query == ''
-                                          //             ? widget.query
-                                          //             : query,
-                                          //         'title': '',
-                                          //         'type': 'songs',
-                                          //       },
-                                          //     ),
-                                          //   ),
-                                          // );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              'View All',
-                                              style: TextStyle(
-                                                color: Colors.white70,
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                            ),
-                                            Icon(
-                                              Icons.chevron_right_rounded,
-                                              color: Colors.white70,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
-                          ListView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.only(
-                              left: 5,
-                              right: 10,
-                            ),
-                            children: [
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  '5 Songs',
-                                  style: TextStyle(color: Colors.white70),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                isThreeLine: false,
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                trailing: AlbumDownloadButton(
-                                  albumId: '',
-                                  albumName: '',
-                                ),
-                                // Row(
-                                //   mainAxisSize: MainAxisSize.min,
-                                //   children: [
-                                //     DownloadButton(
-                                //       data: {},
-                                //       icon: 'download',
-                                //     ),
-                                //     LikeButton(data: {}),
-                                //     SongTileTrailingMenu(
-                                //       data: {},
-                                //     ),
-                                //   ],
-                                // ),
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                onTap: () {},
+                        )
+                      : !fetched
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Color.fromARGB(255, 4, 192, 60)
                               ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  '5 Songs',
-                                  style: TextStyle(color: Colors.white70),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                isThreeLine: false,
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
+                            )
+                          : (searchedData.isEmpty)
+                              ? nothingFound(context)
+                              : SingleChildScrollView(
+                                  padding: const EdgeInsets.only(
+                                    top: 70,
                                   ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                trailing: AlbumDownloadButton(
-                                  albumId: '',
-                                  albumName: '',
-                                ),
-                                // Row(
-                                //   mainAxisSize: MainAxisSize.min,
-                                //   children: [
-                                //     DownloadButton(
-                                //       data: {},
-                                //       icon: 'download',
-                                //     ),
-                                //     LikeButton(data: {}),
-                                //     SongTileTrailingMenu(
-                                //       data: {},
-                                //     ),
-                                //   ],
-                                // ),
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                onTap: () {},
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 25, top: 10, bottom: 7),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Songs',
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 4, 192, 60),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    25,
-                                    0,
-                                    25,
-                                    0,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            PageRouteBuilder(
-                                              opaque: false,
-                                              pageBuilder: (
-                                                _,
-                                                __,
-                                                ___,
-                                              ) =>
-                                                  SongsListScreen(Id: "0"),
+                                  physics: const BouncingScrollPhysics(),
+                                  child: Column(children: [
+                                    if (searchedData['artist'].length > 0)
+                                      Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 25, top: 10, bottom: 7),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Artists',
+                                                  style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 4, 192, 60),
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                    25,
+                                                    0,
+                                                    25,
+                                                    0,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            PageRouteBuilder(
+                                                              opaque: false,
+                                                              pageBuilder: (
+                                                                _,
+                                                                __,
+                                                                ___,
+                                                              ) =>
+                                                                  AlbumSearchPage(
+                                                                query: query ==
+                                                                        ''
+                                                                    ? widget
+                                                                        .query
+                                                                    : query,
+                                                                type: 'Artists',
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              'View All',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white70,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w800,
+                                                              ),
+                                                            ),
+                                                            Icon(
+                                                              Icons
+                                                                  .chevron_right_rounded,
+                                                              color: Colors
+                                                                  .white70,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              'View All',
-                                              style: TextStyle(
-                                                color: Colors.white70,
-                                                fontWeight: FontWeight.w800,
+                                          ),
+                                          ListView.builder(
+                                              itemCount:
+                                                  searchedData['artist'].length,
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              padding: const EdgeInsets.only(
+                                                left: 5,
+                                                right: 10,
                                               ),
+                                              itemBuilder: (context, index) {
+                                                final int count =
+                                                    searchedData['artist']
+                                                                    [index]
+                                                                ['song_list']
+                                                            .length as int? ??
+                                                        0;
+                                                String countText = "";
+                                                count > 1
+                                                    ? countText = '$count Songs'
+                                                    : countText = '$count Song';
+                                                return ListTile(
+                                                  contentPadding:
+                                                      const EdgeInsets.only(
+                                                    left: 15.0,
+                                                  ),
+                                                  title: Text(
+                                                    searchedData['artist']
+                                                            [index]['name']
+                                                        .toString(),
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.white),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  subtitle: Text(
+                                                    countText,
+                                                    style: TextStyle(
+                                                        color: Colors.white70),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  isThreeLine: false,
+                                                  leading: Card(
+                                                    margin: EdgeInsets.zero,
+                                                    elevation: 8,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                        50.0,
+                                                      ),
+                                                    ),
+                                                    clipBehavior:
+                                                        Clip.antiAlias,
+                                                    child: CachedNetworkImage(
+                                                      fit: BoxFit.cover,
+                                                      errorWidget:
+                                                          (context, _, __) =>
+                                                              Image(
+                                                        fit: BoxFit.cover,
+                                                        image: AssetImage(
+                                                          'assets/album.png',
+                                                        ),
+                                                      ),
+                                                      imageUrl:
+                                                          searchedData['artist']
+                                                              [index]['avatar'],
+                                                      placeholder:
+                                                          (context, url) =>
+                                                              Image(
+                                                        fit: BoxFit.cover,
+                                                        image: AssetImage(
+                                                          'assets/album.png',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  trailing: null,
+                                                  onLongPress: () {
+                                                    copyToClipboard(
+                                                      context: context,
+                                                      text:
+                                                          searchedData['artist']
+                                                                      [index]
+                                                                  ['name']
+                                                              .toString(),
+                                                    );
+                                                  },
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      PageRouteBuilder(
+                                                        opaque: false,
+                                                        pageBuilder: (
+                                                          _,
+                                                          __,
+                                                          ___,
+                                                        ) =>
+                                                            ArtistSearchPage(
+                                                                data: searchedData[
+                                                                        'artist']
+                                                                    [
+                                                                    index] as Map),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              }),
+                                        ],
+                                      ),
+                                    if (searchedData['album'].length > 0)
+                                      Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 25, top: 10, bottom: 7),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Albums',
+                                                  style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 4, 192, 60),
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                    25,
+                                                    0,
+                                                    25,
+                                                    0,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            PageRouteBuilder(
+                                                              opaque: false,
+                                                              pageBuilder: (
+                                                                _,
+                                                                __,
+                                                                ___,
+                                                              ) =>
+                                                                  AlbumSearchPage(
+                                                                query: query ==
+                                                                        ''
+                                                                    ? widget
+                                                                        .query
+                                                                    : query,
+                                                                type: 'Albums',
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              'View All',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white70,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w800,
+                                                              ),
+                                                            ),
+                                                            Icon(
+                                                              Icons
+                                                                  .chevron_right_rounded,
+                                                              color: Colors
+                                                                  .white70,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            Icon(
-                                              Icons.chevron_right_rounded,
-                                              color: Colors.white70,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          ListView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.only(
-                              left: 5,
-                              right: 10,
-                            ),
-                            children: [
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  'Bùi Anh Tuấn',
-                                  style: TextStyle(color: Colors.white70),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                isThreeLine: false,
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    DownloadButton(
-                                      data: {},
-                                      icon: 'download',
-                                    ),
-                                    LikeButton(data: {}),
-                                    SongTileTrailingMenu(
-                                      data: {},
-                                    ),
-                                  ],
-                                ),
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                onTap: () {},
-                              ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  'Bùi Anh Tuấn',
-                                  style: TextStyle(color: Colors.white70),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                isThreeLine: false,
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    DownloadButton(
-                                      data: {},
-                                      icon: 'download',
-                                    ),
-                                    LikeButton(data: {}),
-                                    SongTileTrailingMenu(
-                                      data: {},
-                                    ),
-                                  ],
-                                ),
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                onTap: () {},
-                              ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  'Bùi Anh Tuấn',
-                                  style: TextStyle(color: Colors.white70),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                isThreeLine: false,
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    DownloadButton(
-                                      data: {},
-                                      icon: 'download',
-                                    ),
-                                    LikeButton(data: {}),
-                                    SongTileTrailingMenu(
-                                      data: {},
-                                    ),
-                                  ],
-                                ),
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                onTap: () {},
-                              ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  'Bùi Anh Tuấn',
-                                  style: TextStyle(color: Colors.white70),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                isThreeLine: false,
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    DownloadButton(
-                                      data: {},
-                                      icon: 'download',
-                                    ),
-                                    LikeButton(data: {}),
-                                    SongTileTrailingMenu(
-                                      data: {},
-                                    ),
-                                  ],
-                                ),
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                onTap: () {},
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 25, top: 10, bottom: 7),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Playlist',
-                                  style: TextStyle(
-                                    color: Color.fromARGB(255, 4, 192, 60),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    25,
-                                    0,
-                                    25,
-                                    0,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            PageRouteBuilder(
-                                              opaque: false,
-                                              pageBuilder: (
-                                                _,
-                                                __,
-                                                ___,
-                                              ) =>
-                                                  SongsListScreen(Id:"0"),
-                                            ),
-                                          );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              'View All',
-                                              style: TextStyle(
-                                                color: Colors.white70,
-                                                fontWeight: FontWeight.w800,
+                                          ),
+                                          ListView.builder(
+                                              itemCount:
+                                                  searchedData['album'].length,
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              padding: const EdgeInsets.only(
+                                                left: 5,
+                                                right: 10,
                                               ),
+                                              itemBuilder: (context, index) {
+                                                final int count =
+                                                    searchedData['album'][index]
+                                                                ['song_list']
+                                                            .length as int? ??
+                                                        0;
+                                                String countText = "";
+                                                count > 1
+                                                    ? countText = '$count Songs'
+                                                    : countText = '$count Song';
+                                                return ListTile(
+                                                  contentPadding:
+                                                      const EdgeInsets.only(
+                                                    left: 15.0,
+                                                  ),
+                                                  title: Text(
+                                                    searchedData['album'][index]
+                                                        ['name'],
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.white),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  subtitle: Text(
+                                                    countText,
+                                                    style: TextStyle(
+                                                        color: Colors.white70),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  isThreeLine: false,
+                                                  leading: Card(
+                                                    margin: EdgeInsets.zero,
+                                                    elevation: 8,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                        7.0,
+                                                      ),
+                                                    ),
+                                                    clipBehavior:
+                                                        Clip.antiAlias,
+                                                    child: CachedNetworkImage(
+                                                      fit: BoxFit.cover,
+                                                      errorWidget:
+                                                          (context, _, __) =>
+                                                              Image(
+                                                        fit: BoxFit.cover,
+                                                        image: AssetImage(
+                                                          'assets/album.png',
+                                                        ),
+                                                      ),
+                                                      imageUrl:
+                                                          searchedData['album']
+                                                              [index]['image'],
+                                                      placeholder:
+                                                          (context, url) =>
+                                                              Image(
+                                                        fit: BoxFit.cover,
+                                                        image: AssetImage(
+                                                          'assets/album.png',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  trailing: AlbumDownloadButton(
+                                                    albumId: '',
+                                                    albumName: '',
+                                                  ),
+                                                  onLongPress: () {
+                                                    copyToClipboard(
+                                                      context: context,
+                                                      text:
+                                                          searchedData['album']
+                                                              [index]['name'],
+                                                    );
+                                                  },
+                                                  onTap: () {},
+                                                );
+                                              }),
+                                        ],
+                                      ),
+                                    if (searchedData['Songs'].length > 0)
+                                      Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 25, top: 10, bottom: 7),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Songs',
+                                                  style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 4, 192, 60),
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                    25,
+                                                    0,
+                                                    25,
+                                                    0,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            PageRouteBuilder(
+                                                              opaque: false,
+                                                              pageBuilder: (
+                                                                _,
+                                                                __,
+                                                                ___,
+                                                              ) =>
+                                                                  SongsListScreen(
+                                                                listItem: {
+                                                                  "id": "",
+                                                                  "name": "",
+                                                                  "image": "",
+                                                                  "release_date":
+                                                                      "",
+                                                                  "topic": "",
+                                                                  "artist": "",
+                                                                  "song_count":
+                                                                      searchedData[
+                                                                              'Songs']
+                                                                          .length,
+                                                                  "song_list":
+                                                                      searchedData[
+                                                                          'Songs']
+                                                                },
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              'View All',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white70,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w800,
+                                                              ),
+                                                            ),
+                                                            Icon(
+                                                              Icons
+                                                                  .chevron_right_rounded,
+                                                              color: Colors
+                                                                  .white70,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            Icon(
-                                              Icons.chevron_right_rounded,
-                                              color: Colors.white70,
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                          ListView.builder(
+                                              itemCount:
+                                                  searchedData['Songs'].length,
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              padding: const EdgeInsets.only(
+                                                left: 5,
+                                                right: 10,
+                                              ),
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  contentPadding:
+                                                      const EdgeInsets.only(
+                                                    left: 15.0,
+                                                  ),
+                                                  title: Text(
+                                                    searchedData['Songs'][index]
+                                                        ['name'],
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.white),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  subtitle: Text(
+                                                    searchedData['Songs'][index]
+                                                        ['artist'],
+                                                    style: TextStyle(
+                                                        color: Colors.white70),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  isThreeLine: false,
+                                                  leading: Card(
+                                                    margin: EdgeInsets.zero,
+                                                    elevation: 8,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                        7.0,
+                                                      ),
+                                                    ),
+                                                    clipBehavior:
+                                                        Clip.antiAlias,
+                                                    child: CachedNetworkImage(
+                                                      fit: BoxFit.cover,
+                                                      errorWidget:
+                                                          (context, _, __) =>
+                                                              Image(
+                                                        fit: BoxFit.cover,
+                                                        image: AssetImage(
+                                                          'assets/album.png',
+                                                        ),
+                                                      ),
+                                                      imageUrl:
+                                                          searchedData['Songs']
+                                                              [index]['image'],
+                                                      placeholder:
+                                                          (context, url) =>
+                                                              Image(
+                                                        fit: BoxFit.cover,
+                                                        image: AssetImage(
+                                                          'assets/album.png',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  trailing: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      DownloadButton(
+                                                        data: {},
+                                                        icon: 'download',
+                                                      ),
+                                                      LikeButton(data: {}),
+                                                      SongTileTrailingMenu(
+                                                        data: {},
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  onLongPress: () {
+                                                    copyToClipboard(
+                                                      context: context,
+                                                      text:
+                                                          searchedData['Songs']
+                                                              [index]['name'],
+                                                    );
+                                                  },
+                                                  onTap: () {
+                                                    PlayerInvoke.init(
+                                                      songsList: [
+                                                        searchedData['Songs']
+                                                            [index]
+                                                      ],
+                                                      index: 0,
+                                                      isOffline: false,
+                                                    );
+                                                    Navigator.pushNamed(
+                                                      context,
+                                                      '/player',
+                                                    );
+                                                  },
+                                                );
+                                              })
+                                        ],
                                       ),
-                                    ],
-                                  ),
+                                  ]),
                                 ),
-                              ],
-                            ),
-                          ),
-                          ListView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.only(
-                              left: 5,
-                              right: 10,
-                            ),
-                            children: [
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  'Bùi Anh Tuấn',
-                                  style: TextStyle(color: Colors.white70),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                isThreeLine: false,
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                trailing: null,
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                onTap: () {},
-                              ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  'Bùi Anh Tuấn',
-                                  style: TextStyle(color: Colors.white70),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                isThreeLine: false,
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                trailing: null,
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                onTap: () {},
-                              ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  'Bùi Anh Tuấn',
-                                  style: TextStyle(color: Colors.white70),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                isThreeLine: false,
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                trailing: null,
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                onTap: () {},
-                              ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15.0,
-                                ),
-                                title: Text(
-                                  'Xin Em',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  'Bùi Anh Tuấn',
-                                  style: TextStyle(color: Colors.white70),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                isThreeLine: false,
-                                leading: Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 8,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      7.0,
-                                    ),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, _, __) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                    imageUrl:
-                                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                                    placeholder: (context, url) => Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        'assets/album.png',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                trailing: null,
-                                onLongPress: () {
-                                  copyToClipboard(
-                                    context: context,
-                                    text: '',
-                                  );
-                                },
-                                onTap: () {},
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ]),
-                  ),
+
                   onSubmitted: (String submittedQuery) {
                     setState(
                       () {

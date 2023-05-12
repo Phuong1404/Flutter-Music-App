@@ -7,8 +7,8 @@ import 'package:music_app/Widgets/empty_screen.widget.dart';
 import 'package:music_app/Widgets/song_tile_trailing_menu.widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-List localSongs = [];
-List globalSongs = [];
+List localSongs = Hive.box('cache').get('LocalSong', defaultValue: []) as List;
+List globalSongs = Hive.box('cache').get('GlobalSong', defaultValue: []) as List;
 bool localFetched = false;
 bool globalFetched = false;
 final ValueNotifier<bool> localFetchFinished = ValueNotifier<bool>(false);
@@ -136,6 +136,7 @@ class _TopPageState extends State<TopPage>
     final data = await SongApi().getLocal();
     if (data.isNotEmpty) {
       localSongs = data;
+      Hive.box('cache').put('LocalSong', localSongs);
     }
   }
 
@@ -143,6 +144,7 @@ class _TopPageState extends State<TopPage>
     final data = await SongApi().getGlobal();
     if (data.isNotEmpty) {
       globalSongs = data;
+      Hive.box('cache').put('GlobalSong', globalSongs);
     }
   }
 

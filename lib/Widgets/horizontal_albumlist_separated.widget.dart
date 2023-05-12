@@ -7,11 +7,11 @@ import 'package:music_app/Widgets/song_tile_trailing_menu.widget.dart';
 
 class HorizontalAlbumsListSeparated extends StatelessWidget {
   final List songsList;
-  // final Function(int) onTap;
+  final Function(int) onTap;
   const HorizontalAlbumsListSeparated({
     super.key,
     required this.songsList,
-    // required this.onTap,
+    required this.onTap,
   });
 
   @override
@@ -81,7 +81,7 @@ class HorizontalAlbumsListSeparated extends StatelessWidget {
                     trailing: SongTileTrailingMenu(
                       data: item,
                     ),
-                    onTap: () => {},
+                    onTap: () => onTap(songsList.indexOf(item)),
                   );
                 }).toList(),
               ),

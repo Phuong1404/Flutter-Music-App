@@ -272,7 +272,6 @@ class PlayerInvoke {
         ),
       ),
     );
-    print(queue);
     updateNplay(queue, index);
   }
 
