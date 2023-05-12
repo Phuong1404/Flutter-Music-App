@@ -53,6 +53,49 @@ class ArtistApi {
           "id": song_list[i]['id'],
           "name": song_list[i]['name'],
           "image": song_list[i]['image'],
+          "album_id": song_list[i]['album_id'],
+          "file": song_list[i]['file'],
+          "duration": song_list[i]['duration'],
+          "artist": song_list[i]['artist'],
+        };
+        song.add(data);
+      }
+      return {
+        "id": result['id'],
+        "name": result['name'],
+        "avatar": result['avatar'],
+        "birthday": result['birthday'],
+        "song": song,
+        "album": album
+      };
+    }
+    return {};
+  }
+  Future<Map> getOneArtistByName(String name) async {
+    final Uri path = Uri.parse('$Base_Url/spotify/artists/name/$name');
+    final response = await get(path);
+    if (response.statusCode == 200) {
+      final result = await jsonDecode(response.body);
+      final List album_list = result['album'] as List;
+      final List song_list = result['song'] as List;
+      final List<Map> album = [];
+      final List<Map> song = [];
+      for (int i = 0; i < album_list.length; i++) {
+        Map? data = {
+          "id": album_list[i]['id'],
+          "name": album_list[i]['name'],
+          "image": album_list[i]['image'],
+          "topic": album_list[i]['topic'],
+          "song_count": album_list[i]['song_count'],
+        };
+        album.add(data);
+      }
+      for (int i = 0; i < song_list.length; i++) {
+        Map? data = {
+          "id": song_list[i]['id'],
+          "name": song_list[i]['name'],
+          "image": song_list[i]['image'],
+          "album_id": song_list[i]['album_id'],
           "file": song_list[i]['file'],
           "duration": song_list[i]['duration'],
           "artist": song_list[i]['artist'],

@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive/hive.dart';
+import 'package:music_app/API/AlbumAPI.api.dart';
+import 'package:music_app/API/ArtistAPI.api.dart';
+import 'package:music_app/Services/player_service.dart';
 import 'package:music_app/Widgets/collage.widget.dart';
 import 'package:music_app/Widgets/custom_physics.widget.dart';
 import 'package:music_app/Widgets/download_button.widget.dart';
@@ -11,6 +14,7 @@ import 'package:music_app/Widgets/gradient_container.widget.dart';
 import 'package:music_app/Widgets/like_button.widget.dart';
 import 'package:music_app/Widgets/miniplayer.widget.dart';
 import 'package:music_app/Widgets/playlist_head.widget.dart';
+import 'package:music_app/Helpers/song_count.dart' as songs_count;
 import 'package:music_app/Widgets/song_tile_trailing_menu.widget.dart';
 
 class LikedSongs extends StatefulWidget {
@@ -43,12 +47,6 @@ class _LikedSongsState extends State<LikedSongs>
   List _sortedArtistKeysList = [];
   List _sortedGenreKeysList = [];
   TabController? _tcontroller;
-  // int currentIndex = 0;
-  // int sortValue = Hive.box('settings').get('sortValue', defaultValue: 1) as int;
-  // int orderValue =
-  //     Hive.box('settings').get('orderValue', defaultValue: 1) as int;
-  // int albumSortValue =
-  //     Hive.box('settings').get('albumSortValue', defaultValue: 2) as int;
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> _showShuffle = ValueNotifier<bool>(true);
 
@@ -67,13 +65,7 @@ class _LikedSongsState extends State<LikedSongs>
         _showShuffle.value = true;
       }
     });
-    // if (tempPath == null) {
-    //   getTemporaryDirectory().then((value) {
-    //     Hive.box('settings').put('tempDirPath', value.path);
-    //   });
-    // }
-    // _tcontroller!.addListener(changeTitle);
-    // getLiked();
+    getLiked();
     super.initState();
   }
 
@@ -84,215 +76,118 @@ class _LikedSongsState extends State<LikedSongs>
     _scrollController.dispose();
   }
 
-  // void changeTitle() {
-  //   setState(() {
-  //     currentIndex = _tcontroller!.index;
-  //   });
-  // }
+  void getLiked() {
+    likedBox = Hive.box(widget.playlistName);
+    if (widget.fromPlaylist) {
+      _songs = widget.songs!;
+    } else {
+      _songs = likedBox?.values.toList() ?? [];
+      songs_count.addSongsCount(
+        widget.playlistName,
+        _songs.length,
+        _songs.length >= 4
+            ? _songs.sublist(0, 4)
+            : _songs.sublist(0, _songs.length),
+      );
+    }
+    setArtistAlbum();
+  }
 
-  // void getLiked() {
-  //   likedBox = Hive.box(widget.playlistName);
-  //   if (widget.fromPlaylist) {
-  //     _songs = widget.songs!;
-  //   } else {
-  //     _songs = likedBox?.values.toList() ?? [];
-  //     songs_count.addSongsCount(
-  //       widget.playlistName,
-  //       _songs.length,
-  //       _songs.length >= 4
-  //           ? _songs.sublist(0, 4)
-  //           : _songs.sublist(0, _songs.length),
-  //     );
-  //   }
-  //   setArtistAlbum();
-  // }
+  Future<Map> getArtistbyName(String name) async {
+    final data1 = await ArtistApi().getOneArtistByName(name);
+    if (data1.isNotEmpty) {
+      return data1;
+    }
+    return {};
+  }
 
-  // void setArtistAlbum() {
-  //   for (final element in _songs) {
-  //     if (_albums.containsKey(element['album'])) {
-  //       final List<Map> tempAlbum = _albums[element['album']]!;
-  //       tempAlbum.add(element as Map);
-  //       _albums.addEntries([MapEntry(element['album'].toString(), tempAlbum)]);
-  //     } else {
-  //       _albums.addEntries([
-  //         MapEntry(element['album'].toString(), [element as Map])
-  //       ]);
-  //     }
+  Future<Map> getAlbumbyName(String name) async {
+    final data1 = await AlbumAPI().getSongInAlbumByName(name);
+    if (data1.isNotEmpty) {
+      return data1;
+    }
+    return {};
+  }
 
-  //     element['artist'].toString().split(', ').forEach((singleArtist) {
-  //       if (_artists.containsKey(singleArtist)) {
-  //         final List<Map> tempArtist = _artists[singleArtist]!;
-  //         tempArtist.add(element);
-  //         _artists.addEntries([MapEntry(singleArtist, tempArtist)]);
-  //       } else {
-  //         _artists.addEntries([
-  //           MapEntry(singleArtist, [element])
-  //         ]);
-  //       }
-  //     });
+  Future<void> setArtistAlbum() async {
+    for (final element in _songs) {
+      final album1 = await getAlbumbyName(element['album_id']);
+      if (_albums.containsKey(element['album_id'])) {
+        final List<Map> tempAlbum = _albums[element['album_id']]!;
 
-  //     if (_genres.containsKey(element['genre'])) {
-  //       final List<Map> tempGenre = _genres[element['genre']]!;
-  //       tempGenre.add(element);
-  //       _genres.addEntries([MapEntry(element['genre'].toString(), tempGenre)]);
-  //     } else {
-  //       _genres.addEntries([
-  //         MapEntry(element['genre'].toString(), [element])
-  //       ]);
-  //     }
-  //   }
+        tempAlbum.add(element as Map);
+        _albums
+            .addEntries([MapEntry(element['album_id'].toString(), tempAlbum)]);
+      } else {
+        Map element1 = element;
+        element1['album1'] = album1;
+        _albums.addEntries([
+          MapEntry(element['album_id'].toString(), [element1 as Map])
+        ]);
+      }
 
-  //   sortSongs(sortVal: sortValue, order: orderValue);
+      element['artist'].toString().split(' ,').forEach((singleArtist) async {
+        final artist1 = await getArtistbyName(singleArtist);
 
-  //   _sortedAlbumKeysList = _albums.keys.toList();
-  //   _sortedArtistKeysList = _artists.keys.toList();
-  //   _sortedGenreKeysList = _genres.keys.toList();
+        if (_artists.containsKey(singleArtist)) {
+          final List<Map> tempArtist = _artists[singleArtist]!;
+          tempArtist.add(element);
+          _artists.addEntries([MapEntry(singleArtist, tempArtist)]);
+        } else {
+          Map element1 = element;
+          element1['artist1'] = artist1;
+          _artists.addEntries([
+            MapEntry(singleArtist, [element1])
+          ]);
+        }
+      });
 
-  //   sortAlbums();
+      if (_genres.containsKey(element['genre'])) {
+        final List<Map> tempGenre = _genres[element['genre']]!;
+        tempGenre.add(element);
+        _genres.addEntries([MapEntry(element['genre'].toString(), tempGenre)]);
+      } else {
+        _genres.addEntries([
+          MapEntry(element['genre'].toString(), [element])
+        ]);
+      }
+    }
+    added = true;
+    setState(() {});
+    
+    print('$_artists --------+++++++++++++++-----------');
+  }
 
-  //   added = true;
-  //   setState(() {});
-  // }
+  void deleteLiked(Map song) {
+    setState(() {
+      likedBox!.delete(song['id']);
+      if (_albums[song['album']]!.length == 1) {
+        _sortedAlbumKeysList.remove(song['album']);
+      }
+      _albums[song['album']]!.remove(song);
 
-  // void sortSongs({required int sortVal, required int order}) {
-  //   switch (sortVal) {
-  //     case 0:
-  //       _songs.sort(
-  //         (a, b) => a['title']
-  //             .toString()
-  //             .toUpperCase()
-  //             .compareTo(b['title'].toString().toUpperCase()),
-  //       );
-  //       break;
-  //     case 1:
-  //       _songs.sort(
-  //         (a, b) => a['dateAdded']
-  //             .toString()
-  //             .toUpperCase()
-  //             .compareTo(b['dateAdded'].toString().toUpperCase()),
-  //       );
-  //       break;
-  //     case 2:
-  //       _songs.sort(
-  //         (a, b) => a['album']
-  //             .toString()
-  //             .toUpperCase()
-  //             .compareTo(b['album'].toString().toUpperCase()),
-  //       );
-  //       break;
-  //     case 3:
-  //       _songs.sort(
-  //         (a, b) => a['artist']
-  //             .toString()
-  //             .toUpperCase()
-  //             .compareTo(b['artist'].toString().toUpperCase()),
-  //       );
-  //       break;
-  //     case 4:
-  //       _songs.sort(
-  //         (a, b) => a['duration']
-  //             .toString()
-  //             .toUpperCase()
-  //             .compareTo(b['duration'].toString().toUpperCase()),
-  //       );
-  //       break;
-  //     default:
-  //       _songs.sort(
-  //         (b, a) => a['dateAdded']
-  //             .toString()
-  //             .toUpperCase()
-  //             .compareTo(b['dateAdded'].toString().toUpperCase()),
-  //       );
-  //       break;
-  //   }
+      song['artist'].toString().split(', ').forEach((singleArtist) {
+        if (_artists[singleArtist]!.length == 1) {
+          _sortedArtistKeysList.remove(singleArtist);
+        }
+        _artists[singleArtist]!.remove(song);
+      });
 
-  //   if (order == 1) {
-  //     _songs = _songs.reversed.toList();
-  //   }
-  // }
+      if (_genres[song['genre']]!.length == 1) {
+        _sortedGenreKeysList.remove(song['genre']);
+      }
+      _genres[song['genre']]!.remove(song);
 
-  // void sortAlbums() {
-  //   if (albumSortValue == 0) {
-  //     _sortedAlbumKeysList.sort(
-  //       (a, b) =>
-  //           a.toString().toUpperCase().compareTo(b.toString().toUpperCase()),
-  //     );
-  //     _sortedArtistKeysList.sort(
-  //       (a, b) =>
-  //           a.toString().toUpperCase().compareTo(b.toString().toUpperCase()),
-  //     );
-  //     _sortedGenreKeysList.sort(
-  //       (a, b) =>
-  //           a.toString().toUpperCase().compareTo(b.toString().toUpperCase()),
-  //     );
-  //   }
-  //   if (albumSortValue == 1) {
-  //     _sortedAlbumKeysList.sort(
-  //       (b, a) =>
-  //           a.toString().toUpperCase().compareTo(b.toString().toUpperCase()),
-  //     );
-  //     _sortedArtistKeysList.sort(
-  //       (b, a) =>
-  //           a.toString().toUpperCase().compareTo(b.toString().toUpperCase()),
-  //     );
-  //     _sortedGenreKeysList.sort(
-  //       (b, a) =>
-  //           a.toString().toUpperCase().compareTo(b.toString().toUpperCase()),
-  //     );
-  //   }
-  //   if (albumSortValue == 2) {
-  //     _sortedAlbumKeysList
-  //         .sort((b, a) => _albums[a]!.length.compareTo(_albums[b]!.length));
-  //     _sortedArtistKeysList
-  //         .sort((b, a) => _artists[a]!.length.compareTo(_artists[b]!.length));
-  //     _sortedGenreKeysList
-  //         .sort((b, a) => _genres[a]!.length.compareTo(_genres[b]!.length));
-  //   }
-  //   if (albumSortValue == 3) {
-  //     _sortedAlbumKeysList
-  //         .sort((a, b) => _albums[a]!.length.compareTo(_albums[b]!.length));
-  //     _sortedArtistKeysList
-  //         .sort((a, b) => _artists[a]!.length.compareTo(_artists[b]!.length));
-  //     _sortedGenreKeysList
-  //         .sort((a, b) => _genres[a]!.length.compareTo(_genres[b]!.length));
-  //   }
-  //   if (albumSortValue == 4) {
-  //     _sortedAlbumKeysList.shuffle();
-  //     _sortedArtistKeysList.shuffle();
-  //     _sortedGenreKeysList.shuffle();
-  //   }
-  // }
-
-  // void deleteLiked(Map song) {
-  //   setState(() {
-  //     likedBox!.delete(song['id']);
-  //     if (_albums[song['album']]!.length == 1) {
-  //       _sortedAlbumKeysList.remove(song['album']);
-  //     }
-  //     _albums[song['album']]!.remove(song);
-
-  //     song['artist'].toString().split(', ').forEach((singleArtist) {
-  //       if (_artists[singleArtist]!.length == 1) {
-  //         _sortedArtistKeysList.remove(singleArtist);
-  //       }
-  //       _artists[singleArtist]!.remove(song);
-  //     });
-
-  //     if (_genres[song['genre']]!.length == 1) {
-  //       _sortedGenreKeysList.remove(song['genre']);
-  //     }
-  //     _genres[song['genre']]!.remove(song);
-
-  //     _songs.remove(song);
-  //     songs_count.addSongsCount(
-  //       widget.playlistName,
-  //       _songs.length,
-  //       _songs.length >= 4
-  //           ? _songs.sublist(0, 4)
-  //           : _songs.sublist(0, _songs.length),
-  //     );
-  //   });
-  // }
+      _songs.remove(song);
+      songs_count.addSongsCount(
+        widget.playlistName,
+        _songs.length,
+        _songs.length >= 4
+            ? _songs.sublist(0, 4)
+            : _songs.sublist(0, _songs.length),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -357,29 +252,8 @@ class _LikedSongsState extends State<LikedSongs>
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(15.0)),
                       ),
-                      onSelected:
-                          // (currentIndex == 0) ?
-                          (int value) {
-                        // if (value < 5) {
-                        //   sortValue = value;
-                        //   Hive.box('settings').put('sortValue', value);
-                        // } else {
-                        //   orderValue = value - 5;
-                        //   Hive.box('settings').put('orderValue', orderValue);
-                        // }
-                        // sortSongs(sortVal: sortValue, order: orderValue);
-                        // setState(() {});
-                      },
-                      // : (int value) {
-                      //     albumSortValue = value;
-                      //     Hive.box('settings').put('albumSortValue', value);
-                      //     sortAlbums();
-                      //     setState(() {});
-                      //   },
-                      itemBuilder:
-                          // (currentIndex == 0)
-                          // ?
-                          (context) {
+                      onSelected: (int value) {},
+                      itemBuilder: (context) {
                         final List<String> sortTypes = [
                           'Display Name',
                           'Date Added',
@@ -464,7 +338,7 @@ class _LikedSongsState extends State<LikedSongs>
                     SongsTab(
                       songs: _songs,
                       onDelete: (Map item) {
-                        // deleteLiked(item);
+                        deleteLiked(item);
                       },
                       playlistName: widget.playlistName,
                       scrollController: _scrollController,
@@ -504,15 +378,15 @@ class _LikedSongsState extends State<LikedSongs>
                       size: 24.0,
                     ),
                     onPressed: () {
-                      // if (_songs.isNotEmpty) {
-                      //   PlayerInvoke.init(
-                      //     songsList: _songs,
-                      //     index: 0,
-                      //     isOffline: false,
-                      //     recommend: false,
-                      //     shuffle: true,
-                      //   );
-                      // }
+                      if (_songs.isNotEmpty) {
+                        PlayerInvoke.init(
+                          songsList: _songs,
+                          index: 0,
+                          isOffline: false,
+                          recommend: false,
+                          shuffle: true,
+                        );
+                      }
                     },
                   ),
                   builder: (
@@ -566,340 +440,98 @@ class _SongsTabState extends State<SongsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // return emptyScreen(
-    //   context,
-    //   3,
-    //   'Nothing to ',
-    //   15,
-    //   'Show Here',
-    //   50.0,
-    //   'Go and Play Something',
-    //   23.0,
-    // );
-    return Column(
-      children: [
-        PlaylistHead(
-          songsList: widget.songs,
-          offline: false,
-          fromDownloads: false,
-        ),
-        Expanded(
-            child: ListView(
-          controller: widget.scrollController,
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 10),
-          shrinkWrap: true,
-          itemExtent: 70.0,
-          children: [
-            ListTile(
-              leading: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7.0),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: SizedBox.square(
-                  dimension: 50,
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    errorWidget: (context, _, __) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
-                      ),
-                    ),
-                    imageUrl:
-                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                    placeholder: (context, url) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
-                      ),
-                    ),
-                  ),
-                ),
+
+    return (widget.songs.isEmpty)
+        ? emptyScreen(
+            context,
+            3,
+            'Nothing to ',
+            15,
+            'Show Here',
+            50.0,
+            'Go and Play Something',
+            23.0,
+          )
+        : Column(
+            children: [
+              PlaylistHead(
+                songsList: widget.songs,
+                offline: false,
+                fromDownloads: false,
               ),
-              onTap: () {},
-              title: Text(
-                'Xin em',
-                style: TextStyle(color: Colors.white),
-                overflow: TextOverflow.ellipsis,
+              Expanded(
+                child: ListView.builder(
+                    controller: widget.scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.only(bottom: 10),
+                    shrinkWrap: true,
+                    itemCount: widget.songs.length,
+                    itemExtent: 70.0,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: Card(
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(7.0),
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: SizedBox.square(
+                            dimension: 50,
+                            child: CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              errorWidget: (context, _, __) => const Image(
+                                fit: BoxFit.cover,
+                                image: AssetImage(
+                                  'assets/cover.jpg',
+                                ),
+                              ),
+                              imageUrl: widget.songs[index]['image'],
+                              placeholder: (context, url) => const Image(
+                                fit: BoxFit.cover,
+                                image: AssetImage(
+                                  'assets/cover.jpg',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        onTap: () {},
+                        title: Text(
+                          widget.songs[index]['name'],
+                          style: TextStyle(color: Colors.white),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(
+                          widget.songs[index]['artist'],
+                          style: TextStyle(color: Colors.white70),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (widget.playlistName != 'Favorite Songs')
+                              LikeButton(
+                                mediaItem: null,
+                                data: widget.songs[index] as Map,
+                              ),
+                            DownloadButton(
+                              // data: widget.songs[index] as Map,
+                              data: {},
+                              icon: 'download',
+                            ),
+                            SongTileTrailingMenu(
+                              data: {},
+                              // data: widget.songs[index] as Map,
+                              // isPlaylist: true,
+                              // deleteLiked: widget.onDelete,
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
               ),
-              subtitle: Text(
-                'Bùi Anh Tuấn',
-                style: TextStyle(color: Colors.white70),
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // if (widget.playlistName != 'Favorite Songs')
-                  LikeButton(
-                      // mediaItem: null,
-                      // data: widget.songs[index] as Map,
-                      ),
-                  DownloadButton(
-                    // data: widget.songs[index] as Map,
-                    data: {},
-                    icon: 'download',
-                  ),
-                  SongTileTrailingMenu(
-                    data: {},
-                    // data: widget.songs[index] as Map,
-                    // isPlaylist: true,
-                    // deleteLiked: widget.onDelete,
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7.0),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: SizedBox.square(
-                  dimension: 50,
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    errorWidget: (context, _, __) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
-                      ),
-                    ),
-                    imageUrl:
-                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                    placeholder: (context, url) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              onTap: () {},
-              title: Text(
-                'Xin em',
-                style: TextStyle(color: Colors.white),
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Text(
-                'Bùi Anh Tuấn',
-                style: TextStyle(color: Colors.white70),
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // if (widget.playlistName != 'Favorite Songs')
-                  LikeButton(
-                      // mediaItem: null,
-                      // data: widget.songs[index] as Map,
-                      ),
-                  DownloadButton(
-                    // data: widget.songs[index] as Map,
-                    data: {},
-                    icon: 'download',
-                  ),
-                  SongTileTrailingMenu(
-                    data: {},
-                    // data: widget.songs[index] as Map,
-                    // isPlaylist: true,
-                    // deleteLiked: widget.onDelete,
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7.0),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: SizedBox.square(
-                  dimension: 50,
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    errorWidget: (context, _, __) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
-                      ),
-                    ),
-                    imageUrl:
-                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                    placeholder: (context, url) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              onTap: () {},
-              title: Text(
-                'Xin em',
-                style: TextStyle(color: Colors.white),
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Text(
-                'Bùi Anh Tuấn',
-                style: TextStyle(color: Colors.white70),
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // if (widget.playlistName != 'Favorite Songs')
-                  LikeButton(
-                      // mediaItem: null,
-                      // data: widget.songs[index] as Map,
-                      ),
-                  DownloadButton(
-                    // data: widget.songs[index] as Map,
-                    data: {},
-                    icon: 'download',
-                  ),
-                  SongTileTrailingMenu(
-                    data: {},
-                    // data: widget.songs[index] as Map,
-                    // isPlaylist: true,
-                    // deleteLiked: widget.onDelete,
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7.0),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: SizedBox.square(
-                  dimension: 50,
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    errorWidget: (context, _, __) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
-                      ),
-                    ),
-                    imageUrl:
-                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                    placeholder: (context, url) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              onTap: () {},
-              title: Text(
-                'Xin em',
-                style: TextStyle(color: Colors.white),
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Text(
-                'Bùi Anh Tuấn',
-                style: TextStyle(color: Colors.white70),
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // if (widget.playlistName != 'Favorite Songs')
-                  LikeButton(
-                      // mediaItem: null,
-                      // data: widget.songs[index] as Map,
-                      ),
-                  DownloadButton(
-                    // data: widget.songs[index] as Map,
-                    data: {},
-                    icon: 'download',
-                  ),
-                  SongTileTrailingMenu(
-                    data: {},
-                    // data: widget.songs[index] as Map,
-                    // isPlaylist: true,
-                    // deleteLiked: widget.onDelete,
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7.0),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: SizedBox.square(
-                  dimension: 50,
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    errorWidget: (context, _, __) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
-                      ),
-                    ),
-                    imageUrl:
-                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                    placeholder: (context, url) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              onTap: () {},
-              title: Text(
-                'Xin em',
-                style: TextStyle(color: Colors.white),
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Text(
-                'Bùi Anh Tuấn',
-                style: TextStyle(color: Colors.white70),
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // if (widget.playlistName != 'Favorite Songs')
-                  LikeButton(
-                      // mediaItem: null,
-                      // data: widget.songs[index] as Map,
-                      ),
-                  DownloadButton(
-                    // data: widget.songs[index] as Map,
-                    data: {},
-                    icon: 'download',
-                  ),
-                  SongTileTrailingMenu(
-                    data: {},
-                    // data: widget.songs[index] as Map,
-                    // isPlaylist: true,
-                    // deleteLiked: widget.onDelete,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        )),
-      ],
-    );
+            ],
+          );
   }
 }
 
@@ -932,83 +564,84 @@ class _AlbumsTabState extends State<AlbumsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // return emptyScreen(
-    //   context,
-    //   3,
-    //   'Nothing to ',
-    //   15,
-    //   'Show Here',
-    //   50.0,
-    //   'Go and Play Something',
-    //   23.0,
-    // );
-    return ListView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.only(bottom: 10.0),
-        shrinkWrap: true,
-        itemExtent: 70.0,
-        children: [
-          ListTile(
-            leading: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7.0),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: SizedBox.square(
-                  dimension: 50,
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    errorWidget: (context, _, __) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
-                      ),
+
+    return widget.albums.isEmpty
+        ? emptyScreen(
+            context,
+            3,
+            'Nothing to ',
+            15,
+            'Show Here',
+            50.0,
+            'Go and Play Something',
+            23.0,
+          )
+        : ListView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: 10.0),
+            shrinkWrap: true,
+            itemExtent: 70.0,
+            children: [
+                ListTile(
+                  leading: Card(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7.0),
                     ),
-                    imageUrl:
-                        'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
-                    placeholder: (context, url) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/cover.jpg',
+                    clipBehavior: Clip.antiAlias,
+                    child: SizedBox.square(
+                      dimension: 50,
+                      child: CachedNetworkImage(
+                        fit: BoxFit.cover,
+                        errorWidget: (context, _, __) => const Image(
+                          fit: BoxFit.cover,
+                          image: AssetImage(
+                            'assets/cover.jpg',
+                          ),
+                        ),
+                        imageUrl:
+                            'https://avatar-ex-swe.nixcdn.com/song/2018/11/08/2/8/3/9/1541660658234_640.jpg',
+                        placeholder: (context, url) => const Image(
+                          fit: BoxFit.cover,
+                          image: AssetImage(
+                            'assets/cover.jpg',
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              
-            title: Text(
-                'Xin em',
-                style: TextStyle(color: Colors.white),
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Text(
-                'Bùi Anh Tuấn',
-                style: TextStyle(color: Colors.white70),
-                overflow: TextOverflow.ellipsis,
-              ),
-            onTap: () {
-              // Navigator.of(context).push(
-              //   PageRouteBuilder(
-              //     opaque: false,
-              //     pageBuilder: (_, __, ___) => widget.offline
-              //         ? SongsList(
-              //             data: widget
-              //                 .albums[widget.sortedAlbumKeysList[index]]!,
-              //             offline: widget.offline,
-              //           )
-              //         : LikedSongs(
-              //             playlistName: widget.playlistName!,
-              //             fromPlaylist: true,
-              //             showName:
-              //                 widget.sortedAlbumKeysList[index].toString(),
-              //             songs: widget
-              //                 .albums[widget.sortedAlbumKeysList[index]],
-              //           ),
-              //   ),
-              // );
-            },
-          )
-        ]);
+                  title: Text(
+                    'Xin em',
+                    style: TextStyle(color: Colors.white),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
+                    'Bùi Anh Tuấn',
+                    style: TextStyle(color: Colors.white70),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () {
+                    // Navigator.of(context).push(
+                    //   PageRouteBuilder(
+                    //     opaque: false,
+                    //     pageBuilder: (_, __, ___) => widget.offline
+                    //         ? SongsList(
+                    //             data: widget
+                    //                 .albums[widget.sortedAlbumKeysList[index]]!,
+                    //             offline: widget.offline,
+                    //           )
+                    //         : LikedSongs(
+                    //             playlistName: widget.playlistName!,
+                    //             fromPlaylist: true,
+                    //             showName:
+                    //                 widget.sortedAlbumKeysList[index].toString(),
+                    //             songs: widget
+                    //                 .albums[widget.sortedAlbumKeysList[index]],
+                    //           ),
+                    //   ),
+                    // );
+                  },
+                )
+              ]);
   }
 }

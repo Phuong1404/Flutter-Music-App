@@ -161,4 +161,38 @@ class AlbumAPI {
     }
     return {"message": "Data not found"};
   }
+
+  Future<Map> getSongInAlbumByName(String name) async {
+    final Uri path = Uri.parse('$Base_Url/spotify/album/name/$name');
+    final response = await get(path);
+    if (response.statusCode == 200) {
+      final result = await jsonDecode(response.body);
+      final List song = result['song'] as List;
+      final List<Map> songList = [];
+      for (int i = 0; i < song.length; i++) {
+        Map? song_record = {
+          "id": song[i]['id'],
+          "name": song[i]['name'],
+          "image": song[i]['image'],
+          "release_date": song[i]['release_date'],
+          "album_id": song[i]['album_id'],
+          "file": song[i]['file'],
+          "duration": song[i]['duration'],
+          "artist": song[i]['artist'],
+        };
+        songList.add(song_record);
+      }
+      return {
+        "id": result['id'],
+        "name": result['name'],
+        "image": result['image'],
+        "release_date": result['release_date'],
+        "topic": result['topic'],
+        "song_count": result['song_count'],
+        "song": songList,
+        "artist": result['artist'],
+      };
+    }
+    return {"message": "Data not found"};
+  }
 }

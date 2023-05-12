@@ -189,8 +189,8 @@ class _SongsListScreenState extends State<SongsListScreen> {
                                     icon: 'download',
                                   ),
                                   LikeButton(
-                                    // mediaItem: null,
-                                    data: {},
+                                    mediaItem: null,
+                                    data: entry,
                                   ),
                                   // SongTileTrailingMenu(data: entry),
                                   SongTileTrailingMenu(

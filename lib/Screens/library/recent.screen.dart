@@ -125,9 +125,9 @@ class _RecentlyPlayedState extends State<RecentlyPlayed> {
                                   //   icon: 'download',
                                   // ),
                                   LikeButton(
-                                      // mediaItem: null,
-                                      // data: _songs[index] as Map,
-                                      ),
+                                    mediaItem: null,
+                                    data: _songs[index] as Map,
+                                  ),
                                 ],
                               ),
                               title: Text(

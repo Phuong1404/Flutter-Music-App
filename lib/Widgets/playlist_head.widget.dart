@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_app/Services/player_service.dart';
 
 class PlaylistHead extends StatelessWidget {
   final List songsList;
@@ -23,39 +24,49 @@ class PlaylistHead extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            '5 Songs',
-            style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
+            songsList.length > 1
+                ? songsList.length.toString() + " Songs"
+                : songsList.length.toString() + " Song",
+            style: const TextStyle(
+                fontWeight: FontWeight.w600, color: Colors.white),
           ),
           const Spacer(),
           TextButton.icon(
             onPressed: () {
-              // PlayerInvoke.init(
-              //   songsList: songsList,
-              //   index: 0,
-              //   isOffline: offline,
-              //   fromDownloads: fromDownloads,
-              //   recommend: false,
-              //   shuffle: true,s
-              // );
+              PlayerInvoke.init(
+                songsList: songsList,
+                index: 0,
+                isOffline: offline,
+                fromDownloads: fromDownloads,
+                recommend: false,
+                shuffle: true,
+              );
             },
-            icon: const Icon(Icons.shuffle_rounded,color: Colors.white,),
+            icon: const Icon(
+              Icons.shuffle_rounded,
+              color: Colors.white,
+            ),
             label: Text(
               'Shuffle',
-              style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
+              style: const TextStyle(
+                  fontWeight: FontWeight.w600, color: Colors.white),
             ),
           ),
           IconButton(
             onPressed: () {
-              // PlayerInvoke.init(
-              //   songsList: songsList,
-              //   index: 0,
-              //   isOffline: offline,
-              //   fromDownloads: fromDownloads,
-              //   recommend: false,
-              // );
+              PlayerInvoke.init(
+                songsList: songsList,
+                index: 0,
+                isOffline: offline,
+                fromDownloads: fromDownloads,
+                recommend: false,
+              );
             },
             tooltip: 'Shuffle',
-            icon: const Icon(Icons.play_arrow_rounded,color: Colors.white,),
+            icon: const Icon(
+              Icons.play_arrow_rounded,
+              color: Colors.white,
+            ),
             iconSize: 30.0,
           ),
         ],

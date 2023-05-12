@@ -255,7 +255,7 @@ class ControlButtons extends StatelessWidget {
           switch (e) {
             case 'Like':
               return LikeButton(
-                // mediaItem: mediaItem,
+                mediaItem: mediaItem,
                 size: 22.0,
               );
             case 'Previous':
@@ -503,7 +503,7 @@ class NowPlayingStream extends StatelessWidget {
                           ]
                         : [
                             LikeButton(
-                                // mediaItem: queue[index],
+                                mediaItem: queue[index],
                                 ),
                             DownloadButton(
                               icon: 'download',
@@ -852,8 +852,8 @@ class NameNControls extends StatelessWidget {
                                   );
                                 },
                               ),
-                              LikeButton(size: 25.0)
-                              // LikeButton(mediaItem: mediaItem, size: 25.0)
+                              // LikeButton(size: 25.0)
+                              LikeButton(mediaItem: mediaItem, size: 25.0)
                             ],
                           ),
                           ControlButtons(

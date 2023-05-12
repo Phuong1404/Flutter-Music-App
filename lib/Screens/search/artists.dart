@@ -495,7 +495,10 @@ class _ArtistSearchPageState extends State<ArtistSearchPage> {
                                                 data: {},
                                                 icon: 'download',
                                               ),
-                                              LikeButton(data: {}),
+                                              LikeButton(
+                                                data: SongList[index] as Map,
+                                                mediaItem: null,
+                                              ),
                                               SongTileTrailingMenu(
                                                 data: {},
                                               ),

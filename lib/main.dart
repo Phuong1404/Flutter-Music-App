@@ -25,8 +25,10 @@ void main() async {
     await Hive.initFlutter();
   }
   await openHiveBox('settings');
-  
+  await openHiveBox('downloads');
+  await openHiveBox('Favorite Songs');
   await openHiveBox('cache', limit: true);
+
   await startService();
   runApp(const MyApp());
 }
@@ -44,6 +46,7 @@ Future<void> startService() async {
   );
   GetIt.I.registerSingleton<AudioPlayerHandler>(audioHandler);
 }
+
 Future<void> openHiveBox(String boxName, {bool limit = false}) async {
   final box = await Hive.openBox(boxName).onError((error, stackTrace) async {
     final Directory dir = await getApplicationDocumentsDirectory();

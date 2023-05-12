@@ -4,9 +4,9 @@ class MediaItemConverter {
   static Map mediaItemToMap(MediaItem mediaItem) {
     return {
       "id": mediaItem.id,
-      'album': mediaItem.album.toString(),
-      'album_id': mediaItem.extras?['album_id'],
-      'title': mediaItem.title, //name
+      'album_id': mediaItem.album.toString(),
+      // 'album_id': mediaItem.extras?['album_id'],
+      'name': mediaItem.title, //name
       'image': mediaItem.extras!['image'].toString(),
       'file': mediaItem.extras!['file'].toString(),
       "duration": mediaItem.duration?.inSeconds.toString(),

@@ -201,8 +201,7 @@ class _SearchPageState extends State<SearchPage> {
                       : !fetched
                           ? const Center(
                               child: CircularProgressIndicator(
-                                color: Color.fromARGB(255, 4, 192, 60)
-                              ),
+                                  color: Color.fromARGB(255, 4, 192, 60)),
                             )
                           : (searchedData.isEmpty)
                               ? nothingFound(context)
@@ -751,7 +750,11 @@ class _SearchPageState extends State<SearchPage> {
                                                         data: {},
                                                         icon: 'download',
                                                       ),
-                                                      LikeButton(data: {}),
+                                                      LikeButton(
+                                                        mediaItem: null,
+                                                        data:
+                                                            searchedData['Songs'][index] as Map,
+                                                      ),
                                                       SongTileTrailingMenu(
                                                         data: {},
                                                       ),
